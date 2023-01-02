@@ -1,0 +1,36 @@
+name: Release PR
+
+on:
+  push:
+    branches:
+      - master
+      - release-v*
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up environment
+        uses: ./.github/actions/setup
+      - run: bash scripts/git-user-config.sh
+      - name: Set next version ENV variable
+        run: |
+          NEXT_VERSION=$(cat package.json \
+            | grep version \
+            | head -1 \
+            | awk -F: '{ print $2 }' \
+            | sed 's/[",]//g' \
+            | sed 's/ //g' \
+            | awk -F'[.]' '{ if ($3 == "0") print $1"."$2+1"."$3; else print $1"."$2"."$3+1 }')
+          echo "NEXT_VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
+      - name: Create minor/major PR
+        uses: changesets/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          title: |
+            ${{ github.ref_name == 'master' && 'Unreleased changes' || format('Release v{0}', env.NEXT_VERSION) }}
