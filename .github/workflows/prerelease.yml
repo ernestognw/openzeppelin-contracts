@@ -1,12 +1,7 @@
-name: Cherry Pick Fix
+name: Enter/Exit Prerelease
 
 on:
-  workflow_dispatch:
-    inputs:
-      commit:
-        description: 'Commit to pick from master'
-        required: true
-        type: string
+  workflow_dispatch: {}
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -16,12 +11,16 @@ jobs:
     if: ${{ contains(github.ref_name, 'release-v') }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Set up environment
         uses: ./.github/actions/setup
       - run: bash scripts/git-user-config.sh
-      - run: git cherry-pick ${{ inputs.commit }}
-      - run: git push --all origin
+      - name: Set prerelease state
+        run: [ -f .changeset/pre.json ] && npx changeset pre exit rc || npx changeset pre enter rc
+      - name: Commit state
+        run: |
+          git add .
+          git commit -m "Set prerelease state"
+          git push --all origin
       - name: Dispatch Release PR
         uses: ./.github/actions/dispatch-release-pr
+
