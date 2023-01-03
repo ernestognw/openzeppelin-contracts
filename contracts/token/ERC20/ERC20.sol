@@ -8,7 +8,7 @@ import "./extensions/IERC20Metadata.sol";
 import "../../utils/Context.sol";
 
 /**
- * @dev Implementation of the {IERC20} interface.
+ * @dev Implementation of the {IERC20} interface
  *
  * This implementation is agnostic to the way tokens are created. This means
  * that a supply mechanism has to be added in a derived contract using {_mint}.
