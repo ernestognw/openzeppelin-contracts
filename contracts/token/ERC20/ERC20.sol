@@ -26,7 +26,7 @@ import "../../utils/Context.sol";
  * Additionally, an {Approval} event is emitted on calls to {transferFrom}.
  * This allows applications to reconstruct the allowance for all accounts just
  * by listening to said events. Other implementations of the EIP may not emit
- * these events, as it isn't required by the specification.
+ * these events, as it isn't required by the specification
  *
  * Finally, the non-standard {decreaseAllowance} and {increaseAllowance}
  * functions have been added to mitigate the well-known issues around setting
