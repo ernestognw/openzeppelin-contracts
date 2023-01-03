@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.9.0
+
+### Minor Changes
+
+- [`5121a54c`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/5121a54cc554c7291894d61ddba53406eb3132fd) Thanks [@ernestognw](https://github.com/ernestognw)! - Test minor
+
+### Patch Changes
+
+- [`0099355a`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/0099355ad7efd2d84c9037215b03c8a019db9091) Thanks [@ernestognw](https://github.com/ernestognw)! - Testing hotfix
+
 ## 4.8.1
 
 ### Patch Changes
@@ -107,7 +117,6 @@ Existing `ERC4626` contracts that are upgraded to 4.8 must initialize a new vari
 function migrateToV48() public reinitializer(2) {
   __ERC4626_init(IERC20Upgradeable(asset()));
 }
-
 ```
 
 ## 4.7.3
