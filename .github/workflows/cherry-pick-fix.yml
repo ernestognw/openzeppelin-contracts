@@ -8,11 +8,13 @@ on:
         required: true
         type: string
 
+permissions:
+  actions: write
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      actions: write 
     if: ${{ contains(github.ref_name, 'release-v') }}
     steps:
       - uses: actions/checkout@v3
