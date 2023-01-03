@@ -65,7 +65,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
     /**
      * @dev Returns the symbol of the token, usually a shorter version of the
-     * name.
+     * name
      */
     function symbol() public view virtual override returns (string memory) {
         return _symbol;
