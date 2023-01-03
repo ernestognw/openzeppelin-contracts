@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.9.0
+
+### Minor Changes
+
+- [`0f7156a8`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/0f7156a8618c1c425958e1e86d0d8f63323be075) Thanks [@ernestognw](https://github.com/ernestognw)! - Minor
+
+- [`493ff904`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/493ff90404d502db2123c6232d515635bed0fea3) Thanks [@ernestognw](https://github.com/ernestognw)! - Another minor
+
+### Patch Changes
+
+- [`b34cdbfa`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/b34cdbfa02322b57df941e89d046b3cd7c12a1cd) Thanks [@ernestognw](https://github.com/ernestognw)! - Patch
+
 ## Unreleased
 
 - Reformatted codebase with latest version of Prettier Solidity. ([#3898](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3898))
@@ -100,7 +112,6 @@ Existing `ERC4626` contracts that are upgraded to 4.8 must initialize a new vari
 function migrateToV48() public reinitializer(2) {
   __ERC4626_init(IERC20Upgradeable(asset()));
 }
-
 ```
 
 ## 4.7.3
