@@ -27,7 +27,7 @@ jobs:
             | sed 's/ //g' \
             | awk -F'[.]' '{ if ($3 == "0") print $1"."$2+1"."$3; else print $1"."$2"."$3+1 }')
           echo "NEXT_VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
-      - name: Create minor/major PR
+      - name: Create Release PR
         uses: changesets/action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
