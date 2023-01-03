@@ -1,0 +1,46 @@
+name: Open Release Branch
+
+on:
+  workflow_dispatch:
+    ref:
+      description: Ref to open the release branch from
+      required: true
+      type: string
+    increment:
+      description: Type of version increment
+      required: true
+      type: choice
+      options:
+        - major
+        - minor
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ref }}
+      - run: bash scripts/git-user-config.sh
+      - name: Open Release Branch
+        env:
+          INCREMENT: ${{ inputs.increment }}
+        run: |
+          NEXT_VERSION=$(npx semver -i $INCREMENT $(node --print --eval "require('./package.json').version")
+          BRANCH_SUFFIX=$(echo $NEXT_VERSION | awk -F'.' '{ print $1"."$2 }')
+          RELEASE_BRANCH=release-v$BRANCH_SUFFIX
+          git checkout -b $RELEASE_BRANCH
+          git push --all origin
+          echo "RELEASE_BRANCH=${RELEASE_BRANCH}" >> $GITHUB_ENV
+      - name: Enter prerelease
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'prerelease.yml',
+              ref: env.RELEASE_BRANCH,
+            })
