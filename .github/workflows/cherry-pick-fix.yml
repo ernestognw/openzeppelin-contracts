@@ -1,0 +1,23 @@
+name: Cherry Pick Fix
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Commit to pick from master'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.ref_name, 'release-v') }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up environment
+        uses: ./.github/actions/setup
+      - run: bash scripts/git-user-config.sh
+      - run: git cherry-pick ${{ inputs.commit }}
+      - run: git push --all origin
