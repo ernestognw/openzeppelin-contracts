@@ -4,5 +4,8 @@
   "initialVersions": {
     "openzeppelin-solidity": "4.8.0"
   },
-  "changesets": []
+  "changesets": [
+    "dirty-turtles-float",
+    "few-seahorses-leave"
+  ]
 }
