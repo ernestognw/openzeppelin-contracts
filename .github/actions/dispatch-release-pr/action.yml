@@ -1,0 +1,18 @@
+name: Dispatch Release PR
+
+runs:
+  using: composite
+  steps:
+      # Needed since this push is not listened in release-pr.yml
+      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+    - uses: actions/github-script@v6
+      env:
+        REF: ${{ github.ref }}
+      with:
+        script: |
+          github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'release-pr.yml',
+            ref: process.env.REF,
+          })
