@@ -6,11 +6,7 @@ on:
       - master
       - release-v*
   repository_dispatch:
-    types: [
-        # Needed other actions' to be listened
-        # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-        ActionPush,
-      ]
+    types: ['Cherry Pick Fix - Push']
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -20,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+          with:
+            ref: ${{ github.event.client_payload.ref || github.ref }}
       - name: Set up environment
         uses: ./.github/actions/setup
       - run: bash scripts/git-user-config.sh
