@@ -29,7 +29,7 @@ jobs:
         env:
           INCREMENT: ${{ inputs.increment }}
         run: |
-          NEXT_VERSION=$(npx semver -i $INCREMENT $(node --print --eval "require('./package.json').version")
+          NEXT_VERSION=$(npx semver -i $INCREMENT $(node --print --eval "require('./package.json').version"))
           BRANCH_SUFFIX=$(echo $NEXT_VERSION | awk -F'.' '{ print $1"."$2 }')
           RELEASE_BRANCH=release-v$BRANCH_SUFFIX
           git checkout -b $RELEASE_BRANCH
