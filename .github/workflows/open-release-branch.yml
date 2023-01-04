@@ -2,17 +2,18 @@ name: Open Release Branch
 
 on:
   workflow_dispatch:
-    ref:
-      description: Ref to open the release branch from
-      required: true
-      type: string
-    increment:
-      description: Type of version increment
-      required: true
-      type: choice
-      options:
-        - major
-        - minor
+    inputs:
+      ref:
+        description: Ref to open the release branch from
+        required: true
+        type: string
+      increment:
+        description: Type of version increment
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
