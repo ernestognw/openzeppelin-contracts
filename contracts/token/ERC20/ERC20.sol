@@ -272,7 +272,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * Requirements:
      *
      * - `account` cannot be the zero address.
-     * - `account` must have at least `amount` tokens.
+     * - `account` must have at least `amount` tokens
      */
     function _burn(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: burn from the zero address");
