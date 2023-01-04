@@ -15,7 +15,8 @@ jobs:
         uses: ./.github/actions/setup
       - run: bash scripts/git-user-config.sh
       - name: Set prerelease state
-        run: [ -f .changeset/pre.json ] && npx changeset pre exit rc || npx changeset pre enter rc
+        run: |
+          [ -f .changeset/pre.json ] && npx changeset pre exit rc || npx changeset pre enter rc
       - name: Commit state
         run: |
           git add .
@@ -23,4 +24,3 @@ jobs:
           git push --all origin
       - name: Dispatch Release PR
         uses: ./.github/actions/dispatch-release-pr
-
