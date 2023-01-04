@@ -265,7 +265,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
     /**
      * @dev Destroys `amount` tokens from `account`, reducing the
-     * total supply.
+     * total supply
      *
      * Emits a {Transfer} event with `to` set to the zero address.
      *
