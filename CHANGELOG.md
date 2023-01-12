@@ -1,7 +1,15 @@
 # Changelog
 
-## 4.9.0-rc.1 (2023-01-12)
+## 4.9.0 (2023-01-12)
 
+
+- [`a15198f1`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/a15198f11fdc449085b5baa7b9736d2823399f93) Thanks [@ernestognw](https://github.com/ernestognw)! - Minor
+
+- [`384a7d66`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/384a7d664c1fffcf09622e5096b5d7b49c4bfaf6) Thanks [@ernestognw](https://github.com/ernestognw)! - Patch
+
+- [`b6002e31`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/b6002e3160930525d23abcf03ff9fa8c0e5749f9) Thanks [@ernestognw](https://github.com/ernestognw)! - Patch to cherry pick
+
+## 4.9.0-rc.1 (2023-01-12)
 
 - [`b6002e31`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/b6002e3160930525d23abcf03ff9fa8c0e5749f9) Thanks [@ernestognw](https://github.com/ernestognw)! - Patch to cherry pick
 
