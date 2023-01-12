@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "changesets=$(node scripts/release/read-changeset-state.js changesets length)" >> $GITHUB_OUTPUT
           echo "prestate=$(node scripts/release/read-changeset-state.js preState mode)" >> $GITHUB_OUTPUT
-          echo "packageJsonVersion=$(node -p -e "require('./package.json').version")"
+          echo "packageJsonVersion=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
       - id: check_pr_back
         if: contains(github.ref_name, 'release-v') && github.event_name == 'push' && steps.changeset_state.outputs.prestate == 'undefined' && !contains(steps.changeset_state.outputs.packageJsonVersion, '-rc.')
         name: Check if PR back to master is required
