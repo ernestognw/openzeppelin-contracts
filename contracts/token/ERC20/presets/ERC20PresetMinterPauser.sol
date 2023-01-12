@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.1) (token/ERC20/presets/ERC20PresetMinterPauser.sol)
+// OpenZeppelin Contracts (last updated v4.9.2) (token/ERC20/presets/ERC20PresetMinterPauser.sol)
 
 pragma solidity ^0.8.0;
 

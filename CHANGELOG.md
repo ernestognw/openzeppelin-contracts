@@ -1,7 +1,11 @@
 # Changelog
 
-## 4.9.1 (2023-01-12)
+## 4.9.2 (2023-01-12)
 
+
+- [`c477ce26`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/c477ce2678f160f0bcdc27ab6f73d085e99eab24) Thanks [@ernestognw](https://github.com/ernestognw)! - Test
+
+## 4.9.1 (2023-01-12)
 
 - [`2f581b09`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/2f581b09feae6d82b9f6804a173114e6c907bfb5) Thanks [@ernestognw](https://github.com/ernestognw)! - Patch
 

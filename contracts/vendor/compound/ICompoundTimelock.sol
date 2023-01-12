@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.1) (vendor/compound/ICompoundTimelock.sol)
+// OpenZeppelin Contracts (last updated v4.9.2) (vendor/compound/ICompoundTimelock.sol)
 
 pragma solidity ^0.8.0;
 
