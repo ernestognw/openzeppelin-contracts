@@ -298,7 +298,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * This internal function is equivalent to `approve`, and can be used to
      * e.g. set automatic allowances for certain subsystems, etc.
      *
-     * Emits an {Approval} event.
+     * Emits an {Approval} event
      *
      * Requirements:
      *
