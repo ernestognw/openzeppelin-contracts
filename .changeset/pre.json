@@ -4,5 +4,8 @@
   "initialVersions": {
     "openzeppelin-solidity": "4.8.0"
   },
-  "changesets": []
+  "changesets": [
+    "long-coins-tan",
+    "mean-jobs-care"
+  ]
 }
