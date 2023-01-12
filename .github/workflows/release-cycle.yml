@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "changesets=$(node scripts/release/read-changeset-state.js changesets length)" >> $GITHUB_OUTPUT
           echo "prestate=$(node scripts/release/read-changeset-state.js preState mode)" >> $GITHUB_OUTPUT
-          echo "packageJsonVersion=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
+          echo "packageJsonVersion=$(node -p -e "require('./package.json').version")"
       - id: check_pr_back
         if: contains(github.ref_name, 'release-v') && github.event_name == 'push' && steps.changeset_state.outputs.prestate == 'undefined' && !contains(steps.changeset_state.outputs.packageJsonVersion, '-rc.')
         name: Check if PR back to master is required
@@ -191,7 +191,7 @@ jobs:
         env:
           RELEASE_BRANCH: ${{ github.ref_name }}
         run: |
-          git push origin -d "merge/$RELEASE_BRANCH" &>/dev/null
+          git push origin -d "merge/$RELEASE_BRANCH"
           git checkout -b "merge/$RELEASE_BRANCH"
           DELETED_CHANGESETS=$(git diff origin/master --name-only | grep '.changeset/' | grep '.md')
           git merge origin/master -m "Merge master to $RELEASE_BRANCH"
