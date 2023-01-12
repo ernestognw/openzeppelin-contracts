@@ -29,7 +29,7 @@ const VERSION_TITLE_REGEX = /\n## (\d+\.\d+\.\d+(-rc\.\d+)?)\n/g;
 
 const formatted = changelog
   // Remove extra \n
-  .replace(/\n- (\[.*)/g, '- $1')
+  .replace(/\n- (\[#.*)/g, '- $1')
   // Format each release line
   .replace(RELEASE_LINE_REGEX, (_, PRNumber, PRUrl, title) => {
     const replaced = `- ${title}`;
