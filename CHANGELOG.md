@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.9.0-rc.1 (2023-01-12)
+
+
+- [`b6002e31`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/b6002e3160930525d23abcf03ff9fa8c0e5749f9) Thanks [@ernestognw](https://github.com/ernestognw)! - Patch to cherry pick
+
 ## 4.9.0-rc.0 (2023-01-12)
 
 - [`a15198f1`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/a15198f11fdc449085b5baa7b9736d2823399f93) Thanks [@ernestognw](https://github.com/ernestognw)! - Minor
@@ -22,7 +27,6 @@
 - `ERC20Permit`: Added the file `IERC20Permit.sol` and `ERC20Permit.sol` and deprecated `draft-IERC20Permit.sol` and `draft-ERC20Permit.sol` since [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) is no longer a Draft. Developers are encouraged to update their imports. ([#3793](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3793))
 
 ## 4.8.1 (2023-01-12)
-
 
 - `ERC4626`: Use staticcall instead of call when fetching underlying ERC-20 decimals. ([#3943](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3943))
 
