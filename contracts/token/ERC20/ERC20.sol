@@ -283,7 +283,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
         unchecked {
             _balances[account] = accountBalance - amount;
-            // Overflow not possible: amount <= accountBalance <= totalSupply.
+            // verflow not possible: amount <= accountBalance <= totalSupply.
             _totalSupply -= amount;
         }
 
