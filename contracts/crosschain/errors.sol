@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.0) (crosschain/errors.sol)
+// OpenZeppelin Contracts (last updated v4.9.1) (crosschain/errors.sol)
 
 pragma solidity ^0.8.4;
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.0) (interfaces/IERC721Receiver.sol)
+// OpenZeppelin Contracts (last updated v4.9.1) (interfaces/IERC721Receiver.sol)
 
 pragma solidity ^0.8.0;
 

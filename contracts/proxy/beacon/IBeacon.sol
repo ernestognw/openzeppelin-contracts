@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.0) (proxy/beacon/IBeacon.sol)
+// OpenZeppelin Contracts (last updated v4.9.1) (proxy/beacon/IBeacon.sol)
 
 pragma solidity ^0.8.0;
 
