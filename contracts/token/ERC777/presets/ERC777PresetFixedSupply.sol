@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.1) (token/ERC777/presets/ERC777PresetFixedSupply.sol)
+// OpenZeppelin Contracts (last updated v4.9.2) (token/ERC777/presets/ERC777PresetFixedSupply.sol)
 pragma solidity ^0.8.0;
 
 import "../ERC777.sol";

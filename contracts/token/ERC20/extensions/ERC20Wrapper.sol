@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.1) (token/ERC20/extensions/ERC20Wrapper.sol)
+// OpenZeppelin Contracts (last updated v4.9.2) (token/ERC20/extensions/ERC20Wrapper.sol)
 
 pragma solidity ^0.8.0;
 
