@@ -301,7 +301,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * Emits an {Approval} event
      *
      * Requirements:
-     *
+     
      * - `owner` cannot be the zero address.
      * - `spender` cannot be the zero address.
      */
