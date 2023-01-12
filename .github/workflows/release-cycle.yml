@@ -198,7 +198,7 @@ jobs:
           git merge origin/master -m "Merge master to $RELEASE_BRANCH"
           echo $DELETED_CHANGESETS | while read -r changeset; do rm -f $changeset; done
           git add .
-          git commit -m "Sync changesets with master"
+          git commit --allow-empty -m "Sync changesets with master"
           git push --all
       - name: Create PR back to master
         uses: actions/github-script@v6
