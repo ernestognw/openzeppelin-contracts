@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.0-rc.1) (utils/escrow/RefundEscrow.sol)
+// OpenZeppelin Contracts (last updated v4.9.0) (utils/escrow/RefundEscrow.sol)
 
 pragma solidity ^0.8.0;
 
