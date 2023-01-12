@@ -110,7 +110,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          version: npm run version
+          version: chmod +x .; npm run version
           title: ${{ env.TITLE }}
           commit: ${{ env.TITLE }}
           body: | # Wait for support on this
