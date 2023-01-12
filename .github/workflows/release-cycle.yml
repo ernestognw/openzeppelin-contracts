@@ -24,7 +24,7 @@ jobs:
           echo "prestate=$(node scripts/release/read-changeset-state.js preState mode)" >> $GITHUB_OUTPUT
           echo "packageJsonVersion=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
       - id: check_pr_back
-        if: contains(github.ref_name, 'release-v') && github.event_name == 'push' && steps.changeset_state.outputs.prestate == 'undefined' && !contains(steps.changeset_state.outputs.packageJsonVersion, '-rc.')
+        if: contains(github.ref_name, 'release-v') && github.event_name == 'push' && steps.changeset_state.outputs.prestate == 'undefined' && !contains(steps.changeset_state.outputs.packageJsonVersion, '-rc.') && steps.changeset_state.outputs.changesets == '0'
         name: Check if PR back to master is required
         uses: actions/github-script@v6
         with:
