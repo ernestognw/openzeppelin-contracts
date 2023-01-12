@@ -191,6 +191,7 @@ jobs:
         env:
           RELEASE_BRANCH: ${{ github.ref_name }}
         run: |
+          MERGE_BRANCH=merge/$RELEASE_BRANCH
           if [ `git branch --list $MERGE_BRANCH` ]; then git push origin -d $MERGE_BRANCH; fi;
           git checkout -b $MERGE_BRANCH
           DELETED_CHANGESETS=$(git diff origin/master --name-only | grep '.changeset/' | grep '.md')
