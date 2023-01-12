@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.9.0-rc.0 (2023-01-12)
+
+- [`a15198f1`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/a15198f11fdc449085b5baa7b9736d2823399f93) Thanks [@ernestognw](https://github.com/ernestognw)! - Minor
+- [`384a7d66`](https://github.com/OpenZeppelin/openzeppelin-contracts/commit/384a7d664c1fffcf09622e5096b5d7b49c4bfaf6) Thanks [@ernestognw](https://github.com/ernestognw)! - Patch
+
 ## Unreleased
 
 - Reformatted codebase with latest version of Prettier Solidity. ([#3898](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3898))
@@ -16,9 +21,10 @@
 
 - `ERC20Permit`: Added the file `IERC20Permit.sol` and `ERC20Permit.sol` and deprecated `draft-IERC20Permit.sol` and `draft-ERC20Permit.sol` since [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) is no longer a Draft. Developers are encouraged to update their imports. ([#3793](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3793))
 
-## 4.8.1
+## 4.8.1 (2023-01-12)
 
- * `ERC4626`: Use staticcall instead of call when fetching underlying ERC-20 decimals. ([#3943](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3943))
+
+- `ERC4626`: Use staticcall instead of call when fetching underlying ERC-20 decimals. ([#3943](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3943))
 
 ## 4.8.0 (2022-11-08)
 
@@ -364,7 +370,6 @@ Make sure you're using git or another version control system to be able to recov
 Some further changes have been done between the different beta iterations. Transitions made during this period are configured in the `migrate-imports` script. Consequently, you can upgrade from any previous 4.0-beta.x version using the same script as described in the _How to upgrade from 3.x_ section.
 
 ## 3.4.2 (2021-07-24)
-
 
 - `TimelockController`: Add additional isOperationReady check.
 
