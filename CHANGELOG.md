@@ -1,5 +1,34 @@
 # Changelog
 
+
+## 4.9.0 (2023-01-18)
+
+- `ReentrancyGuard`: Add a `_reentrancyGuardEntered` function to expose the guard status. ([#3714](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3714))
+- `EnumerableMap`: add a `keys()` function that returns an array containing all the keys. ([#3920](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3920))
+- `Strings`: add `equal` method. ([#3774](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3774))
+- `Strings`: add `toString` method for signed integers. ([#3773](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3773))
+- `Initializable`: optimize `_disableInitializers` by using `!=` instead of `<`. ([#3787](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3787))
+- Reformatted codebase with latest version of Prettier Solidity. ([#3898](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3898))
+- Patch
+- `Math`: optimize `log256` rounding check. ([#3745](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3745))
+- `ERC20Votes`: optimize by using unchecked arithmetic. ([#3748](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3748))
+- `MerkleProof`: optimize by using unchecked arithmetic. ([#3745](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3745))
+## 4.9.0-rc.1 (2023-01-18)
+
+- Patch
+
+## 4.9.0-rc.0 (2023-01-18)
+
+- `ReentrancyGuard`: Add a `_reentrancyGuardEntered` function to expose the guard status. ([#3714](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3714))
+- `EnumerableMap`: add a `keys()` function that returns an array containing all the keys. ([#3920](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3920))
+- `Strings`: add `equal` method. ([#3774](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3774))
+- `Strings`: add `toString` method for signed integers. ([#3773](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3773))
+- `Initializable`: optimize `_disableInitializers` by using `!=` instead of `<`. ([#3787](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3787))
+- Reformatted codebase with latest version of Prettier Solidity. ([#3898](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3898))
+- `Math`: optimize `log256` rounding check. ([#3745](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3745))
+- `ERC20Votes`: optimize by using unchecked arithmetic. ([#3748](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3748))
+- `MerkleProof`: optimize by using unchecked arithmetic. ([#3745](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3745))
+
 ### Deprecations
 
 - `ERC20Permit`: Added the file `IERC20Permit.sol` and `ERC20Permit.sol` and deprecated `draft-IERC20Permit.sol` and `draft-ERC20Permit.sol` since [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) is no longer a Draft. Developers are encouraged to update their imports. ([#3793](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3793))
