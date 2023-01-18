@@ -27,6 +27,7 @@ import "../../utils/Context.sol";
  * conventional and does not conflict with the expectations of ERC20
  * applications.
  *
+ * 
  * Additionally, an {Approval} event is emitted on calls to {transferFrom}.
  * This allows applications to reconstruct the allowance for all accounts just
  * by listening to said events. Other implementations of the EIP may not emit
