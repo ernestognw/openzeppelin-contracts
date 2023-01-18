@@ -1,7 +1,7 @@
 {
   "name": "ernestognw-dummy-contracts",
   "description": "Secure Smart Contract library for Solidity",
-  "version": "0.1.0",
+  "version": "4.9.2",
   "files": [
     "**/*.sol",
     "/build/contracts/*.json",
