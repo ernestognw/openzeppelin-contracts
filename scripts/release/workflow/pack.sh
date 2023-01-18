@@ -23,3 +23,4 @@ TARBALL="$(npm pack | tee /dev/stderr | tail -1)"
 echo "tarball=$(pwd)/$TARBALL" >> $GITHUB_OUTPUT
 echo "tag=$(dist_tag)" >> $GITHUB_OUTPUT
 cd ..
+
