@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.1) (token/ERC20/ERC20.sol)
+// OpenZeppelin Contracts (last updated v4.9.0) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.0;
 
@@ -32,7 +32,8 @@ import "../../utils/Context.sol";
  * these events, as it isn't required by the specification.
  * 
  *
- * Finally, the non-standard {decreaseAllowance} and {increaseAllowance}
+ * Finally, the 
+ * non-standard {decreaseAllowance} and {increaseAllowance}
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
