@@ -4,5 +4,15 @@
   "initialVersions": {
     "openzeppelin-solidity": "4.8.0"
   },
-  "changesets": []
+  "changesets": [
+    "beige-buses-drop",
+    "curvy-shrimps-enjoy",
+    "famous-rules-burn",
+    "funny-rockets-compete",
+    "gold-chicken-clean",
+    "healthy-squids-stare",
+    "lemon-dogs-kiss",
+    "pretty-hornets-play",
+    "tame-ladybugs-sit"
+  ]
 }
