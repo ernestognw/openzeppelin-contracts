@@ -32,7 +32,8 @@ import "../../utils/Context.sol";
  * these events, as it isn't required by the specification.
  * 
  *
- * Finally, the non-standard {decreaseAllowance} and {increaseAllowance}
+ * Finally, the 
+ * non-standard {decreaseAllowance} and {increaseAllowance}
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
