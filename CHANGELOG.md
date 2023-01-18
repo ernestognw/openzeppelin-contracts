@@ -1,6 +1,9 @@
 # Changelog
 
 
+## 4.9.0-rc.1 (2023-01-18)
+
+- Patch
 ## 4.9.0-rc.0 (2023-01-18)
 
 - `ReentrancyGuard`: Add a `_reentrancyGuardEntered` function to expose the guard status. ([#3714](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3714))
@@ -12,6 +15,7 @@
 - `Math`: optimize `log256` rounding check. ([#3745](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3745))
 - `ERC20Votes`: optimize by using unchecked arithmetic. ([#3748](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3748))
 - `MerkleProof`: optimize by using unchecked arithmetic. ([#3745](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3745))
+
 ### Deprecations
 
 - `ERC20Permit`: Added the file `IERC20Permit.sol` and `ERC20Permit.sol` and deprecated `draft-IERC20Permit.sol` and `draft-ERC20Permit.sol` since [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) is no longer a Draft. Developers are encouraged to update their imports. ([#3793](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/3793))
