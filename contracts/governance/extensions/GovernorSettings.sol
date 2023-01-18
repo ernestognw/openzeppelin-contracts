@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.1) (governance/extensions/GovernorSettings.sol)
+// OpenZeppelin Contracts (last updated v4.9.2) (governance/extensions/GovernorSettings.sol)
 
 pragma solidity ^0.8.0;
 
