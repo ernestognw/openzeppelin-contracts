@@ -1,7 +1,7 @@
 {
-  "name": "@openzeppelin/contracts",
+  "name": "ernestognw-dummy-contracts",
   "description": "Secure Smart Contract library for Solidity",
-  "version": "4.9.1",
+  "version": "0.1.0",
   "files": [
     "**/*.sol",
     "/build/contracts/*.json",
