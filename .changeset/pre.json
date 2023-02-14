@@ -4,5 +4,33 @@
   "initialVersions": {
     "openzeppelin-solidity": "4.8.0"
   },
-  "changesets": []
+  "changesets": [
+    "beige-buses-drop",
+    "curvy-shrimps-enjoy",
+    "curvy-suns-sort",
+    "early-oranges-raise",
+    "famous-rules-burn",
+    "five-ducks-develop",
+    "five-poets-mix",
+    "flat-deers-end",
+    "four-bats-sniff",
+    "funny-rockets-compete",
+    "gold-chicken-clean",
+    "happy-socks-travel",
+    "healthy-squids-stare",
+    "lemon-dogs-kiss",
+    "little-kiwis-ring",
+    "many-panthers-hide",
+    "modern-games-exist",
+    "new-ways-own",
+    "ninety-hornets-kick",
+    "pretty-hornets-play",
+    "proud-comics-deliver",
+    "short-roses-judge",
+    "strong-bulldogs-buy",
+    "tame-ladybugs-sit",
+    "thin-dragons-report",
+    "violet-frogs-hide",
+    "yellow-swans-cover"
+  ]
 }
