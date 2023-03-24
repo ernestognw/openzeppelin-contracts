@@ -209,19 +209,16 @@ abstract contract AccessControlDefaultAdminRules is IAccessControlDefaultAdminRu
      */
     function _beginDefaultAdminTransfer(address newAdmin) internal virtual {
         (, uint48 oldSchedule) = pendingDefaultAdmin();
-        uint48 newSchedule = SafeCast.toUint48(block.timestamp) + defaultAdminDelay();
-
-        _pendingDefaultAdmin = newAdmin;
-        _pendingDefaultAdminSchedule = newSchedule;
 
         // An `oldSchedule` from `pendingDefaultAdmin()` is only set if it hasn't been accepted.
         if (_isScheduleSet(oldSchedule)) {
             // Emit for implicit cancellations when another default admin was scheduled.
             emit DefaultAdminTransferCanceled();
         }
-        if (_isScheduleSet(newSchedule)) {
-            emit DefaultAdminTransferScheduled(newAdmin, newSchedule);
-        }
+        uint48 newSchedule = SafeCast.toUint48(block.timestamp) + defaultAdminDelay();
+        _pendingDefaultAdmin = newAdmin;
+        _pendingDefaultAdminSchedule = newSchedule;
+        emit DefaultAdminTransferScheduled(newAdmin, newSchedule);
     }
 
     /**
