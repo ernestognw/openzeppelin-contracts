@@ -237,10 +237,14 @@ abstract contract AccessControlDefaultAdminRules is IAccessControlDefaultAdminRu
      * Internal function without access restriction.
      */
     function _cancelDefaultAdminTransfer() internal virtual {
-        delete _pendingDefaultAdmin;
-        delete _pendingDefaultAdminSchedule;
+        (, uint48 oldSchedule) = pendingDefaultAdmin();
 
-        emit DefaultAdminTransferCanceled();
+        if (_isScheduleSet(oldSchedule)) {
+            delete _pendingDefaultAdmin;
+            delete _pendingDefaultAdminSchedule;
+
+            emit DefaultAdminTransferCanceled();
+        }
     }
 
     /**
