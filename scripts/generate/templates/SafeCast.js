@@ -61,7 +61,7 @@ const version = (selector, length) => {
 };
 
 const header = `\
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 /**
  * @dev Wrappers over Solidity's uintXX/intXX casting operators with added overflow
@@ -80,6 +80,34 @@ pragma solidity ^0.8.0;
  */
 `;
 
+const toUintDownCastErrors = length => `\
+  /**
+   * @dev Value doesn't fit in ${length} bits.
+   */
+  error SafeCastOverflownUint${length}(uint256 value);
+`;
+
+const toUintErrors = length => `\
+  /**
+   * @dev Value must be positive.
+   */
+  error SafeCastOverflownUint${length}(int256 value);
+`;
+
+const toIntDownCastErrors = length => `\
+  /**
+   * @dev Value doesn't fit in ${length} bits.
+   */
+  error SafeCastOverflownInt${length}(int256 value);
+`;
+
+const toIntErrors = length => `\
+  /**
+   * @dev Value doesn't fit in an int${length}.
+   */
+  error SafeCastOverflownInt${length}(uint256 value);
+`;
+
 const toUintDownCast = length => `\
 /**
  * @dev Returns the downcasted uint${length} from uint256, reverting on
@@ -94,7 +122,9 @@ const toUintDownCast = length => `\
  * _Available since v${version('toUint(uint)', length)}._
  */
 function toUint${length}(uint256 value) internal pure returns (uint${length}) {
-    require(value <= type(uint${length}).max, "SafeCast: value doesn't fit in ${length} bits");
+    if (value > type(uint${length}).max) {
+      revert SafeCastOverflownUint${length}(value);
+    }
     return uint${length}(value);
 }
 `;
@@ -116,7 +146,9 @@ const toIntDownCast = length => `\
  */
 function toInt${length}(int256 value) internal pure returns (int${length} downcasted) {
     downcasted = int${length}(value);
-    require(downcasted == value, "SafeCast: value doesn't fit in ${length} bits");
+    if (downcasted != value) {
+      revert SafeCastOverflownInt${length}(value);
+    }
 }
 `;
 /* eslint-enable max-len */
@@ -133,7 +165,9 @@ const toInt = length => `\
  */
 function toInt${length}(uint${length} value) internal pure returns (int${length}) {
     // Note: Unsafe cast below is okay because \`type(int${length}).max\` is guaranteed to be positive
-    require(value <= uint${length}(type(int${length}).max), "SafeCast: value doesn't fit in an int${length}");
+    if (value > uint${length}(type(int${length}).max)) {
+      revert SafeCastOverflownInt${length}(value);
+    }
     return int${length}(value);
 }
 `;
@@ -149,7 +183,9 @@ const toUint = length => `\
  * _Available since v${version('toUint(int)', length)}._
  */
 function toUint${length}(int${length} value) internal pure returns (uint${length}) {
-    require(value >= 0, "SafeCast: value must be positive");
+    if (value < 0) {
+      revert SafeCastOverflownUint${length}(value);
+    }
     return uint${length}(value);
 }
 `;
@@ -158,6 +194,7 @@ function toUint${length}(int${length} value) internal pure returns (uint${length
 module.exports = format(
   header.trimEnd(),
   'library SafeCast {',
+  [...LENGTHS.map(toUintDownCastErrors), toUintErrors(256), ...LENGTHS.map(toIntDownCastErrors), toIntErrors(256)],
   [...LENGTHS.map(toUintDownCast), toUint(256), ...LENGTHS.map(toIntDownCast), toInt(256)],
   '}',
 );
