@@ -2,6 +2,7 @@ const { makeInterfaceId } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
+const INVALID_ID = '0xffffffff';
 const INTERFACES = {
   ERC165: ['supportsInterface(bytes4)'],
   ERC721: [
@@ -37,6 +38,18 @@ const INTERFACES = {
     'renounceRole(bytes32,address)',
   ],
   AccessControlEnumerable: ['getRoleMember(bytes32,uint256)', 'getRoleMemberCount(bytes32)'],
+  AccessControlDefaultAdminRules: [
+    'defaultAdminDelay()',
+    'pendingDefaultAdminDelay()',
+    'defaultAdmin()',
+    'pendingDefaultAdmin()',
+    'defaultAdminDelayIncreaseWait()',
+    'changeDefaultAdminDelay(uint48)',
+    'rollbackDefaultAdminDelay()',
+    'beginDefaultAdminTransfer(address)',
+    'acceptDefaultAdminTransfer()',
+    'cancelDefaultAdminTransfer()',
+  ],
   Governor: [
     'name()',
     'version()',
@@ -54,7 +67,7 @@ const INTERFACES = {
     'execute(address[],uint256[],bytes[],bytes32)',
     'castVote(uint256,uint8)',
     'castVoteWithReason(uint256,uint8,string)',
-    'castVoteBySig(uint256,uint8,uint8,bytes32,bytes32)',
+    'castVoteBySig(uint256,uint8,address,bytes)',
   ],
   GovernorWithParams: [
     'name()',
@@ -75,9 +88,10 @@ const INTERFACES = {
     'castVote(uint256,uint8)',
     'castVoteWithReason(uint256,uint8,string)',
     'castVoteWithReasonAndParams(uint256,uint8,string,bytes)',
-    'castVoteBySig(uint256,uint8,uint8,bytes32,bytes32)',
-    'castVoteWithReasonAndParamsBySig(uint256,uint8,string,bytes,uint8,bytes32,bytes32)',
+    'castVoteBySig(uint256,uint8,address,bytes)',
+    'castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)',
   ],
+  GovernorCancel: ['proposalProposer(uint256)', 'cancel(address[],uint256[],bytes[],bytes32)'],
   GovernorTimelock: ['timelock()', 'proposalEta(uint256)', 'queue(address[],uint256[],bytes[],bytes32)'],
   ERC2981: ['royaltyInfo(uint256,uint256)'],
 };
@@ -98,18 +112,30 @@ function shouldSupportInterfaces(interfaces = []) {
       this.contractUnderTest = this.mock || this.token || this.holder || this.accessControl;
     });
 
-    it('supportsInterface uses less than 30k gas', async function () {
-      for (const k of interfaces) {
-        const interfaceId = INTERFACE_IDS[k] ?? k;
-        expect(await this.contractUnderTest.supportsInterface.estimateGas(interfaceId)).to.be.lte(30000);
-      }
+    describe('when the interfaceId is supported', function () {
+      it('uses less than 30k gas', async function () {
+        for (const k of interfaces) {
+          const interfaceId = INTERFACE_IDS[k] ?? k;
+          expect(await this.contractUnderTest.supportsInterface.estimateGas(interfaceId)).to.be.lte(30000);
+        }
+      });
+
+      it('returns true', async function () {
+        for (const k of interfaces) {
+          const interfaceId = INTERFACE_IDS[k] ?? k;
+          expect(await this.contractUnderTest.supportsInterface(interfaceId)).to.equal(true, `does not support ${k}`);
+        }
+      });
     });
 
-    it('all interfaces are reported as supported', async function () {
-      for (const k of interfaces) {
-        const interfaceId = INTERFACE_IDS[k] ?? k;
-        expect(await this.contractUnderTest.supportsInterface(interfaceId)).to.equal(true);
-      }
+    describe('when the interfaceId is not supported', function () {
+      it('uses less thank 30k', async function () {
+        expect(await this.contractUnderTest.supportsInterface.estimateGas(INVALID_ID)).to.be.lte(30000);
+      });
+
+      it('returns false', async function () {
+        expect(await this.contractUnderTest.supportsInterface(INVALID_ID)).to.be.equal(false, `supports ${INVALID_ID}`);
+      });
     });
 
     it('all interface functions are in ABI', async function () {
@@ -118,7 +144,10 @@ function shouldSupportInterfaces(interfaces = []) {
         if (INTERFACES[k] === undefined) continue;
         for (const fnName of INTERFACES[k]) {
           const fnSig = FN_SIGNATURES[fnName];
-          expect(this.contractUnderTest.abi.filter(fn => fn.signature === fnSig).length).to.equal(1);
+          expect(this.contractUnderTest.abi.filter(fn => fn.signature === fnSig).length).to.equal(
+            1,
+            `did not find ${fnName}`,
+          );
         }
       }
     });
