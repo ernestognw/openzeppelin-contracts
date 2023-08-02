@@ -18,15 +18,35 @@ abstract contract ERC2771Context is Context {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address private immutable _trustedForwarder;
 
+    /**
+     * @dev Sets an immutable trusted forwarder.
+     *
+     * NOTE: The trusted forwarder can be replaced by overriding {trustedForwarder}.
+     */
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address trustedForwarder) {
-        _trustedForwarder = trustedForwarder;
+    constructor(address trustedForwarder_) {
+        _trustedForwarder = trustedForwarder_;
     }
 
+    /**
+     * @dev Returns the address of the trusted forwarder.
+     */
+    function trustedForwarder() public view virtual returns (address) {
+        return _trustedForwarder;
+    }
+
+    /**
+     * @dev Indicates whether any particular address is the trusted forwarder.
+     */
     function isTrustedForwarder(address forwarder) public view virtual returns (bool) {
-        return forwarder == _trustedForwarder;
+        return forwarder == trustedForwarder();
     }
 
+    /**
+     * @dev Override for `msg.data`. Defaults to the original `msg.sender` whenever
+     * a call is not performed by the trusted forwarder or the calldata length is less than
+     * 20 bytes (an address length).
+     */
     function _msgSender() internal view virtual override returns (address) {
         if (isTrustedForwarder(msg.sender) && msg.data.length >= 20) {
             address sender;
@@ -41,6 +61,11 @@ abstract contract ERC2771Context is Context {
         }
     }
 
+    /**
+     * @dev Override for `msg.data`. Defaults to the original `msg.data` whenever
+     * a call is not performed by the trusted forwarder or the calldata length is less than
+     * 20 bytes (an address length).
+     */
     function _msgData() internal view virtual override returns (bytes calldata) {
         if (isTrustedForwarder(msg.sender) && msg.data.length >= 20) {
             return msg.data[:msg.data.length - 20];
