@@ -50,7 +50,7 @@ contract('VestingWallet', function (accounts) {
         this.checkRelease = () => {};
       });
 
-      shouldBehaveLikeVesting(beneficiary);
+      shouldBehaveLikeVesting(beneficiary, accounts);
     });
 
     describe('ERC20 vesting', function () {
@@ -63,7 +63,7 @@ contract('VestingWallet', function (accounts) {
         await this.token.$_mint(this.mock.address, amount);
       });
 
-      shouldBehaveLikeVesting(beneficiary);
+      shouldBehaveLikeVesting(beneficiary, accounts);
     });
   });
 });

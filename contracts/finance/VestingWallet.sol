@@ -29,11 +29,24 @@ contract VestingWallet is Context {
      */
     error VestingWalletInvalidBeneficiary(address beneficiary);
 
+    /**
+     * @dev The caller is not the releaser.
+     */
+    error VestingWalletUnauthorizedReleaser(address releaser);
+
     uint256 private _released;
     mapping(address => uint256) private _erc20Released;
     address private immutable _beneficiary;
     uint64 private immutable _start;
     uint64 private immutable _duration;
+
+    /**
+     * @dev Allows a function be only called by the {releaser} address.
+     */
+    modifier onlyReleaser() {
+        _checkReleaser();
+        _;
+    }
 
     /**
      * @dev Set the beneficiary, start timestamp and vesting duration of the vesting wallet.
@@ -57,6 +70,14 @@ contract VestingWallet is Context {
      */
     function beneficiary() public view virtual returns (address) {
         return _beneficiary;
+    }
+
+    /**
+     * @dev Getter for the releaser address. Same as the {beneficiary} by default
+     * but can be overridden for other access control mechanisms.
+     */
+    function releaser() public view virtual returns (address) {
+        return beneficiary();
     }
 
     /**
@@ -114,7 +135,7 @@ contract VestingWallet is Context {
      *
      * Emits a {EtherReleased} event.
      */
-    function release() public virtual {
+    function release() public virtual onlyReleaser {
         uint256 amount = releasable();
         _released += amount;
         emit EtherReleased(amount);
@@ -126,7 +147,7 @@ contract VestingWallet is Context {
      *
      * Emits a {ERC20Released} event.
      */
-    function release(address token) public virtual {
+    function release(address token) public virtual onlyReleaser {
         uint256 amount = releasable(token);
         _erc20Released[token] += amount;
         emit ERC20Released(token, amount);
@@ -158,6 +179,15 @@ contract VestingWallet is Context {
             return totalAllocation;
         } else {
             return (totalAllocation * (timestamp - start())) / duration();
+        }
+    }
+
+    /**
+     * @dev Reverts if the sender is not the {releaser} address.
+     */
+    function _checkReleaser() internal view virtual {
+        if (_msgSender() != releaser()) {
+            revert VestingWalletUnauthorizedReleaser(_msgSender());
         }
     }
 }
