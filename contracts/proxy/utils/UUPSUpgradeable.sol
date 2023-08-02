@@ -126,7 +126,7 @@ abstract contract UUPSUpgradeable is IERC1822Proxiable {
     function _authorizeUpgrade(address newImplementation) internal virtual;
 
     /**
-     * @dev Performs ab implementation upgrade with a security check for UUPS proxies, and additional setup call.
+     * @dev Performs an implementation upgrade with a security check for UUPS proxies, and additional setup call.
      *
      * The security check calling {proxiableUUID} expects the id to be the ERC1967's implementation.
      *
