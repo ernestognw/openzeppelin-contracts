@@ -9,6 +9,8 @@ import {Ownable} from "../../access/Ownable.sol";
 /**
  * @dev This is an auxiliary contract meant to be assigned as the admin of a {TransparentUpgradeableProxy}. For an
  * explanation of why you would want to use this see the documentation for {TransparentUpgradeableProxy}.
+ *
+ * NOTE: This contract does not make use of {Context} deliberately. 
  */
 contract ProxyAdmin is Ownable {
     /**
@@ -16,7 +18,7 @@ contract ProxyAdmin is Ownable {
      * and `upgradeAndCall(address,bytes)` are present, and `upgradeTo` must be used if no function should be called,
      * while `upgradeAndCall` will invoke the `receive` function if the second argument is the empty byte string.
      * If the getter returns `"5.0.0"`, only `upgradeAndCall(address,bytes)` is present, and the second argument must
-     * be the empty byte string if no function should be called, being impossible to invoke the `receive` function
+     * be the empty byte string if no function should be called, making impossible to invoke the `receive` function
      * during an upgrade.
      */
     string public constant UPGRADE_INTERFACE_VERSION = "5.0.0";

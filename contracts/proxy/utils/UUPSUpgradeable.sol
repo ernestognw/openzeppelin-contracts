@@ -25,7 +25,7 @@ abstract contract UUPSUpgradeable is IERC1822Proxiable {
      * and `upgradeToAndCall(address,bytes)` are present, and `upgradeTo` must be used if no function should be called,
      * while `upgradeToAndCall` will invoke the `receive` function if the second argument is the empty byte string.
      * If the getter returns `"5.0.0"`, only `upgradeToAndCall(address,bytes)` is present, and the second argument must
-     * be the empty byte string if no function should be called, being impossible to invoke the `receive` function
+     * be the empty byte string if no function should be called, making impossible to invoke the `receive` function
      * during an upgrade.
      */
     string public constant UPGRADE_INTERFACE_VERSION = "5.0.0";
@@ -126,7 +126,9 @@ abstract contract UUPSUpgradeable is IERC1822Proxiable {
     function _authorizeUpgrade(address newImplementation) internal virtual;
 
     /**
-     * @dev Perform implementation upgrade with security checks for UUPS proxies, and additional setup call.
+     * @dev Performs ab implementation upgrade with a security check for UUPS proxies, and additional setup call.
+     *
+     * The security check calling {proxiableUUID} expects the id to be the ERC1967's implementation.
      *
      * Emits an {IERC1967-Upgraded} event.
      */
