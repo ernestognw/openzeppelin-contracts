@@ -10,7 +10,7 @@ import {Ownable} from "../../access/Ownable.sol";
  * @dev This is an auxiliary contract meant to be assigned as the admin of a {TransparentUpgradeableProxy}. For an
  * explanation of why you would want to use this see the documentation for {TransparentUpgradeableProxy}.
  *
- * NOTE: This contract does not make use of {Context} deliberately. 
+ * NOTE: This contract does not make use of {Context} deliberately.
  */
 contract ProxyAdmin is Ownable {
     /**
