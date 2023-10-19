@@ -1,5 +1,5 @@
 const { ethers } = require('hardhat');
-const { getDomain, domainType, domainSeparator, hashTypedData } = require('../../helpers/eip712');
+const { getDomain, domainSeparator, hashTypedData } = require('../../helpers/eip712');
 const { getChainId } = require('../../helpers/chainid');
 const { mapValues } = require('../../helpers/iterate');
 
@@ -31,7 +31,6 @@ contract('EIP712', function (accounts) {
           chainId: await getChainId(),
           verifyingContract: this.eip712.address,
         };
-        this.domainType = domainType(this.domain);
       });
 
       describe('domain separator', function () {
