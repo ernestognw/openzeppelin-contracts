@@ -23,13 +23,13 @@ When plotted in log-log scale, the rate is defined similarly, but appears differ
 
 image::erc4626-rate-loglog.png[Exchange rates in logarithmic scale]
 
-In such a reprentation, widely different rates can be clearly visible in the same graph. This wouldn't be the case in linear scale.
+In such a representation, widely different rates can be clearly visible in the same graph. This wouldn't be the case in linear scale.
 
 image::erc4626-rate-loglogext.png[More exchange rates in logarithmic scale]
 
 === The attack
 
-When depositing tokens, the number of shares a user gets is rounded down. This rounding takes away value from the user in favor or the vault (i.e. in favor of all the current share holders). This rounding is often negligible because of the amount at stake. If you deposit 1e9 shares worth of tokens, the rounding will have you lose at most 0.0000001% of your deposit. However if you deposit 10 shares worth of tokens, you could lose 10% of your deposit. Even worse, if you deposit <1 share worth of tokens, then you get 0 shares, and you basically made a donation.
+When depositing tokens, the number of shares a user gets is rounded towards zero. This rounding takes away value from the user in favor or the vault (i.e. in favor of all the current share holders). This rounding is often negligible because of the amount at stake. If you deposit 1e9 shares worth of tokens, the rounding will have you lose at most 0.0000001% of your deposit. However if you deposit 10 shares worth of tokens, you could lose 10% of your deposit. Even worse, if you deposit <1 share worth of tokens, then you get 0 shares, and you basically made a donation.
 
 For a given amount of assets, the more shares you receive the safer you are. If you want to limit your losses to at most 1%, you need to receive at least 100 shares.
 
@@ -102,13 +102,12 @@ In this scenario, the attack is stem:[n] times less powerful (in how much it is 
 
 === Defending with a virtual offset
 
-The defense we propose consists of two parts:
+The defense we propose is based on the approach used in link:https://github.com/boringcrypto/YieldBox[YieldBox]. It consists of two parts:
 
 - Use an offset between the "precision" of the representation of shares and assets. Said otherwise, we use more decimal places to represent the shares than the underlying token does to represent the assets.
 - Include virtual shares and virtual assets in the exchange rate computation. These virtual assets enforce the conversion rate when the vault is empty.
 
 These two parts work together in enforcing the security of the vault. First, the increased precision corresponds to a high rate, which we saw is safer as it reduces the rounding error when computing the amount of shares. Second, the virtual assets and shares (in addition to simplifying a lot of the computations) capture part of the donation, making it unprofitable for a developer to perform an attack.
-
 
 Following the previous math definitions, we have:
 
@@ -191,3 +190,25 @@ stem:[\delta = 3], stem:[a_0 = 100], stem:[a_1 = 10^5]
 
 image::erc4626-attack-6.png[Inflation attack without offset=6]
 stem:[\delta = 6], stem:[a_0 = 1], stem:[a_1 = 10^5]
+
+
+[[fees]]
+== Custom behavior: Adding fees to the vault
+
+In an ERC4626 vaults, fees can be captured during the deposit/mint and/or during the withdraw/redeem steps. In both cases it is essential to remain compliant with the ERC4626 requirements with regard to the preview functions.
+
+For example, if calling `deposit(100, receiver)`, the caller should deposit exactly 100 underlying tokens, including fees, and the receiver should receive a number of shares that matches the value returned by `previewDeposit(100)`. Similarly, `previewMint` should account for the fees that the user will have to pay on top of share's cost.
+
+As for the `Deposit` event, while this is less clear in the EIP spec itself, there seems to be consensus that it should include the number of assets paid for by the user, including the fees.
+
+On the other hand, when withdrawing assets, the number given by the user should correspond to what he receives. Any fees should be added to the quote (in shares) performed by `previewWithdraw`.
+
+The `Withdraw` event should include the number of shares the user burns (including fees) and the number of assets the user actually receives (after fees are deducted).
+
+The consequence of this design is that both the `Deposit` and `Withdraw` events will describe two exchange rates. The spread between the "Buy-in" and the "Exit" prices correspond to the fees taken by the vault.
+
+The following example describes how fees proportional to the deposited/withdrawn amount can be implemented:
+
+```solidity
+include::api:example$ERC4626Fees.sol[]
+```
