@@ -3,7 +3,6 @@
 pragma solidity ^0.8.20;
 
 import {Math} from "../math/Math.sol";
-import {SafeCast} from "../math/SafeCast.sol";
 import {Comparators} from "../Comparators.sol";
 import {Arrays} from "../Arrays.sol";
 import {Panic} from "../Panic.sol";
@@ -25,7 +24,7 @@ import {StorageSlot} from "../StorageSlot.sol";
  *
  * * peek (get the highest priority value): O(1)
  * * insert (insert a value): O(log(n))
- * * pop (remove the highest priority value): O(log(n))
+ * * popPeek (remove the highest priority value): O(log(n))
  * * replace (replace the highest priority value with a new value): O(log(n))
  * * length (get the number of elements): O(1)
  * * clear (remove all elements): O(1)
@@ -33,23 +32,13 @@ import {StorageSlot} from "../StorageSlot.sol";
 library Heap {
     using Arrays for *;
     using Math for *;
-    using SafeCast for *;
-
-    /**
-     * @dev Binary heap that support values of type uint256.
-     *
-     * Each element of that structure uses 2 storage slots.
-     */
-    struct Uint256Heap {
-        uint256[] tree;
-    }
 
     /**
      * @dev Lookup the root element of the heap.
      */
-    function peek(Uint256Heap storage self) internal view returns (uint256) {
-        // self.tree[0] will `ARRAY_ACCESS_OUT_OF_BOUNDS` panic if heap is empty.
-        return self.tree[0];
+    function peek(uint256[] storage heap) internal view returns (uint256) {
+        // heap[0] will `ARRAY_ACCESS_OUT_OF_BOUNDS` panic if heap is empty.
+        return heap[0];
     }
 
     /**
@@ -58,8 +47,8 @@ library Heap {
      * NOTE: All inserting and removal from a heap should always be done using the same comparator. Mixing comparator
      * during the lifecycle of a heap will result in undefined behavior.
      */
-    function pop(Uint256Heap storage self) internal returns (uint256) {
-        return pop(self, Comparators.lt);
+    function popPeek(uint256[] storage heap) internal returns (uint256) {
+        return popPeek(heap, Comparators.lt);
     }
 
     /**
@@ -68,22 +57,22 @@ library Heap {
      * NOTE: All inserting and removal from a heap should always be done using the same comparator. Mixing comparator
      * during the lifecycle of a heap will result in undefined behavior.
      */
-    function pop(
-        Uint256Heap storage self,
+    function popPeek(
+        uint256[] storage heap,
         function(uint256, uint256) view returns (bool) comp
     ) internal returns (uint256) {
         unchecked {
-            uint64 size = length(self);
+            uint256 size = heap.length;
             if (size == 0) Panic.panic(Panic.EMPTY_ARRAY_POP);
 
             // cache
-            uint256 rootValue = self.tree.unsafeAccess(0).value;
-            uint256 lastValue = self.tree.unsafeAccess(size - 1).value;
+            uint256 rootValue = heap.unsafeAccess(0).value;
+            uint256 lastValue = heap.unsafeAccess(size - 1).value;
 
             // swap last leaf with root, shrink tree and re-heapify
-            self.tree.pop();
-            self.tree.unsafeAccess(0).value = lastValue;
-            _siftDown(self, size - 1, 0, lastValue, comp);
+            heap.pop();
+            heap.unsafeAccess(0).value = lastValue;
+            _siftDown(heap, 0, lastValue, comp);
 
             return rootValue;
         }
@@ -95,8 +84,8 @@ library Heap {
      * NOTE: All inserting and removal from a heap should always be done using the same comparator. Mixing comparator
      * during the lifecycle of a heap will result in undefined behavior.
      */
-    function insert(Uint256Heap storage self, uint256 value) internal {
-        insert(self, value, Comparators.lt);
+    function insert(uint256[] storage heap, uint256 value) internal {
+        insert(heap, value, Comparators.lt);
     }
 
     /**
@@ -106,74 +95,64 @@ library Heap {
      * during the lifecycle of a heap will result in undefined behavior.
      */
     function insert(
-        Uint256Heap storage self,
+        uint256[] storage heap,
         uint256 value,
         function(uint256, uint256) view returns (bool) comp
     ) internal {
-        uint64 size = length(self);
-        if (size == type(uint64).max) Panic.panic(Panic.RESOURCE_ERROR);
-
+        uint256 size = heap.length;
         // push new item and re-heapify
-        self.tree.push(value);
-        _siftUp(self, size, value, comp);
+        heap.push(value);
+        _siftUp(heap, size, value, comp);
     }
 
     /**
      * @dev Return the root element for the heap, and replace it with a new value, using the default comparator.
-     * This is equivalent to using {pop} and {insert}, but requires only one rebalancing operation.
+     * This is equivalent to using {popPeek} and {insert}, but requires only one rebalancing operation.
      *
      * NOTE: All inserting and removal from a heap should always be done using the same comparator. Mixing comparator
      * during the lifecycle of a heap will result in undefined behavior.
      */
-    function replace(Uint256Heap storage self, uint256 newValue) internal returns (uint256) {
-        return replace(self, newValue, Comparators.lt);
+    function replace(uint256[] storage heap, uint256 newValue) internal returns (uint256) {
+        return replace(heap, newValue, Comparators.lt);
     }
 
     /**
      * @dev Return the root element for the heap, and replace it with a new value, using the provided comparator.
-     * This is equivalent to using {pop} and {insert}, but requires only one rebalancing operation.
+     * This is equivalent to using {popPeek} and {insert}, but requires only one rebalancing operation.
      *
      * NOTE: All inserting and removal from a heap should always be done using the same comparator. Mixing comparator
      * during the lifecycle of a heap will result in undefined behavior.
      */
     function replace(
-        Uint256Heap storage self,
+        uint256[] storage heap,
         uint256 newValue,
         function(uint256, uint256) view returns (bool) comp
     ) internal returns (uint256) {
-        uint64 size = length(self);
-        if (size == 0) Panic.panic(Panic.EMPTY_ARRAY_POP);
+        if (heap.length == 0) Panic.panic(Panic.EMPTY_ARRAY_POP);
 
         // cache
-        uint256 oldValue = self.tree.unsafeAccess(0).value;
+        uint256 oldValue = heap.unsafeAccess(0).value;
 
         // replace and re-heapify
-        self.tree.unsafeAccess(0).value = newValue;
-        _siftDown(self, size, 0, newValue, comp);
+        heap.unsafeAccess(0).value = newValue;
+        _siftDown(heap, 0, newValue, comp);
 
         return oldValue;
     }
 
     /**
-     * @dev Returns the number of elements in the heap.
-     */
-    function length(Uint256Heap storage self) internal view returns (uint64) {
-        return self.tree.length.toUint64();
-    }
-
-    /**
      * @dev Removes all elements in the heap.
      */
-    function clear(Uint256Heap storage self) internal {
-        self.tree.unsafeSetLength(0);
+    function clear(uint256[] storage heap) internal {
+        heap.unsafeSetLength(0);
     }
 
     /**
      * @dev Swap node `i` and `j` in the tree.
      */
-    function _swap(Uint256Heap storage self, uint64 i, uint64 j) private {
-        StorageSlot.Uint256Slot storage ni = self.tree.unsafeAccess(i);
-        StorageSlot.Uint256Slot storage nj = self.tree.unsafeAccess(j);
+    function _swap(uint256[] storage heap, uint256 i, uint256 j) private {
+        StorageSlot.Uint256Slot storage ni = heap.unsafeAccess(i);
+        StorageSlot.Uint256Slot storage nj = heap.unsafeAccess(j);
         (ni.value, nj.value) = (nj.value, ni.value);
     }
 
@@ -186,33 +165,28 @@ library Heap {
      * parameters are not verified. It is the caller role to make sure the parameters are correct.
      */
     function _siftDown(
-        Uint256Heap storage self,
-        uint64 size,
-        uint64 index,
+        uint256[] storage heap,
+        uint256 index,
         uint256 value,
         function(uint256, uint256) view returns (bool) comp
     ) private {
-        uint256 left = 2 * index + 1; // this could overflow uint64
-        uint256 right = 2 * index + 2; // this could overflow uint64
+        uint256 size = heap.length;
+        uint256 left = 2 * index + 1; // this could not realistically overflow
+        uint256 right = 2 * index + 2; // this could not realistically overflow
 
         if (right < size) {
-            // the check guarantees that `left` and `right` are both valid uint64
-            uint64 lIndex = uint64(left);
-            uint64 rIndex = uint64(right);
-            uint256 lValue = self.tree.unsafeAccess(lIndex).value;
-            uint256 rValue = self.tree.unsafeAccess(rIndex).value;
+            uint256 lValue = heap.unsafeAccess(left).value;
+            uint256 rValue = heap.unsafeAccess(right).value;
             if (comp(lValue, value) || comp(rValue, value)) {
-                uint64 sIndex = uint64(comp(lValue, rValue).ternary(lIndex, rIndex));
-                _swap(self, index, sIndex);
-                _siftDown(self, size, sIndex, value, comp);
+                uint256 sIndex = uint256(comp(lValue, rValue).ternary(left, right));
+                _swap(heap, index, sIndex);
+                _siftDown(heap, sIndex, value, comp);
             }
         } else if (left < size) {
-            // the check guarantees that `left` is a valid uint64
-            uint64 lIndex = uint64(left);
-            uint256 lValue = self.tree.unsafeAccess(lIndex).value;
+            uint256 lValue = heap.unsafeAccess(left).value;
             if (comp(lValue, value)) {
-                _swap(self, index, lIndex);
-                _siftDown(self, size, lIndex, value, comp);
+                _swap(heap, index, left);
+                _siftDown(heap, left, value, comp);
             }
         }
     }
@@ -226,17 +200,17 @@ library Heap {
      * verified. It is the caller role to make sure the parameters are correct.
      */
     function _siftUp(
-        Uint256Heap storage self,
-        uint64 index,
+        uint256[] storage heap,
+        uint256 index,
         uint256 value,
         function(uint256, uint256) view returns (bool) comp
     ) private {
         unchecked {
             while (index > 0) {
-                uint64 parentIndex = (index - 1) / 2;
-                uint256 parentValue = self.tree.unsafeAccess(parentIndex).value;
+                uint256 parentIndex = (index - 1) / 2;
+                uint256 parentValue = heap.unsafeAccess(parentIndex).value;
                 if (comp(parentValue, value)) break;
-                _swap(self, index, parentIndex);
+                _swap(heap, index, parentIndex);
                 index = parentIndex;
             }
         }

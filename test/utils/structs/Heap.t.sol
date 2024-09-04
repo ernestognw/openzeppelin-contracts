@@ -7,25 +7,25 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {Heap} from "@openzeppelin/contracts/utils/structs/Heap.sol";
 import {Comparators} from "@openzeppelin/contracts/utils/Comparators.sol";
 
-contract Uint256HeapTest is Test {
-    using Heap for Heap.Uint256Heap;
+contract HeapTest is Test {
+    using Heap for uint256[];
 
-    Heap.Uint256Heap internal heap;
+    uint256[] internal heap;
 
     function _validateHeap(function(uint256, uint256) view returns (bool) comp) internal {
-        for (uint32 i = 1; i < heap.length(); ++i) {
-            assertFalse(comp(heap.tree[i], heap.tree[(i - 1) / 2]));
+        for (uint32 i = 1; i < heap.length; ++i) {
+            assertFalse(comp(heap[i], heap[(i - 1) / 2]));
         }
     }
 
     function testFuzz(uint256[] calldata input) public {
         vm.assume(input.length < 0x20);
-        assertEq(heap.length(), 0);
+        assertEq(heap.length, 0);
 
         uint256 min = type(uint256).max;
         for (uint256 i = 0; i < input.length; ++i) {
             heap.insert(input[i]);
-            assertEq(heap.length(), i + 1);
+            assertEq(heap.length, i + 1);
             _validateHeap(Comparators.lt);
 
             min = Math.min(min, input[i]);
@@ -35,8 +35,8 @@ contract Uint256HeapTest is Test {
         uint256 max = 0;
         for (uint256 i = 0; i < input.length; ++i) {
             uint256 top = heap.peek();
-            uint256 pop = heap.pop();
-            assertEq(heap.length(), input.length - i - 1);
+            uint256 pop = heap.popPeek();
+            assertEq(heap.length, input.length - i - 1);
             _validateHeap(Comparators.lt);
 
             assertEq(pop, top);
@@ -47,12 +47,12 @@ contract Uint256HeapTest is Test {
 
     function testFuzzGt(uint256[] calldata input) public {
         vm.assume(input.length < 0x20);
-        assertEq(heap.length(), 0);
+        assertEq(heap.length, 0);
 
         uint256 max = 0;
         for (uint256 i = 0; i < input.length; ++i) {
             heap.insert(input[i], Comparators.gt);
-            assertEq(heap.length(), i + 1);
+            assertEq(heap.length, i + 1);
             _validateHeap(Comparators.gt);
 
             max = Math.max(max, input[i]);
@@ -62,8 +62,8 @@ contract Uint256HeapTest is Test {
         uint256 min = type(uint256).max;
         for (uint256 i = 0; i < input.length; ++i) {
             uint256 top = heap.peek();
-            uint256 pop = heap.pop(Comparators.gt);
-            assertEq(heap.length(), input.length - i - 1);
+            uint256 pop = heap.popPeek(Comparators.gt);
+            assertEq(heap.length, input.length - i - 1);
             _validateHeap(Comparators.gt);
 
             assertEq(pop, top);

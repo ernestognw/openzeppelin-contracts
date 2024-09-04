@@ -13,32 +13,23 @@ describe('Heap', function () {
     Object.assign(this, await loadFixture(fixture));
   });
 
-  describe('Uint256Heap', function () {
-    it('starts empty', async function () {
-      expect(await this.mock.$length(0)).to.equal(0n);
-    });
-
+  describe('uint256[]', function () {
     it('peek, pop and replace from empty', async function () {
       await expect(this.mock.$peek(0)).to.be.revertedWithPanic(PANIC_CODES.ARRAY_ACCESS_OUT_OF_BOUNDS);
-      await expect(this.mock.$pop(0)).to.be.revertedWithPanic(PANIC_CODES.POP_ON_EMPTY_ARRAY);
+      await expect(this.mock.$popPeek(0)).to.be.revertedWithPanic(PANIC_CODES.POP_ON_EMPTY_ARRAY);
       await expect(this.mock.$replace(0, 0n)).to.be.revertedWithPanic(PANIC_CODES.POP_ON_EMPTY_ARRAY);
     });
 
     it('clear', async function () {
       await this.mock.$insert(0, 42n);
 
-      expect(await this.mock.$length(0)).to.equal(1n);
       expect(await this.mock.$peek(0)).to.equal(42n);
 
       await this.mock.$clear(0);
-
-      expect(await this.mock.$length(0)).to.equal(0n);
       await expect(this.mock.$peek(0)).to.be.revertedWithPanic(PANIC_CODES.ARRAY_ACCESS_OUT_OF_BOUNDS);
     });
 
     it('support duplicated items', async function () {
-      expect(await this.mock.$length(0)).to.equal(0n);
-
       // insert 5 times
       await this.mock.$insert(0, 42n);
       await this.mock.$insert(0, 42n);
@@ -47,14 +38,14 @@ describe('Heap', function () {
       await this.mock.$insert(0, 42n);
 
       // pop 5 times
-      await expect(this.mock.$pop(0)).to.emit(this.mock, 'return$pop').withArgs(42n);
-      await expect(this.mock.$pop(0)).to.emit(this.mock, 'return$pop').withArgs(42n);
-      await expect(this.mock.$pop(0)).to.emit(this.mock, 'return$pop').withArgs(42n);
-      await expect(this.mock.$pop(0)).to.emit(this.mock, 'return$pop').withArgs(42n);
-      await expect(this.mock.$pop(0)).to.emit(this.mock, 'return$pop').withArgs(42n);
+      await expect(this.mock.$popPeek(0)).to.emit(this.mock, 'return$popPeek').withArgs(42n);
+      await expect(this.mock.$popPeek(0)).to.emit(this.mock, 'return$popPeek').withArgs(42n);
+      await expect(this.mock.$popPeek(0)).to.emit(this.mock, 'return$popPeek').withArgs(42n);
+      await expect(this.mock.$popPeek(0)).to.emit(this.mock, 'return$popPeek').withArgs(42n);
+      await expect(this.mock.$popPeek(0)).to.emit(this.mock, 'return$popPeek').withArgs(42n);
 
       // popping a 6th time panics
-      await expect(this.mock.$pop(0)).to.be.revertedWithPanic(PANIC_CODES.POP_ON_EMPTY_ARRAY);
+      await expect(this.mock.$popPeek(0)).to.be.revertedWithPanic(PANIC_CODES.POP_ON_EMPTY_ARRAY);
     });
 
     it('insert, pop and replace', async function () {
@@ -86,9 +77,9 @@ describe('Heap', function () {
             break;
           case 'pop':
             if (heap.length == 0) {
-              await expect(this.mock.$pop(0)).to.be.revertedWithPanic(PANIC_CODES.POP_ON_EMPTY_ARRAY);
+              await expect(this.mock.$popPeek(0)).to.be.revertedWithPanic(PANIC_CODES.POP_ON_EMPTY_ARRAY);
             } else {
-              await expect(this.mock.$pop(0)).to.emit(this.mock, 'return$pop').withArgs(heap.shift());
+              await expect(this.mock.$popPeek(0)).to.emit(this.mock, 'return$popPeek').withArgs(heap.shift());
             }
             break;
           case 'replace':
@@ -101,7 +92,6 @@ describe('Heap', function () {
             }
             break;
         }
-        expect(await this.mock.$length(0)).to.equal(heap.length);
         if (heap.length == 0) {
           await expect(this.mock.$peek(0)).to.be.revertedWithPanic(PANIC_CODES.ARRAY_ACCESS_OUT_OF_BOUNDS);
         } else {
