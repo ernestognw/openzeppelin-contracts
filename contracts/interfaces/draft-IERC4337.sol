@@ -46,7 +46,7 @@ struct PackedUserOperation {
 /**
  * @dev Aggregates and validates multiple signatures for a batch of user operations.
  *
- * An contract could implement this interface with custom validation schemes that allow signature aggregation,
+ * A contract could implement this interface with custom validation schemes that allow signature aggregation,
  * enabling significant optimizations and gas savings for execution and transaction data cost.
  *
  * Bundlers and clients whitelist supported aggregators.
