@@ -9,31 +9,6 @@ import {Packing} from "../../utils/Packing.sol";
 /**
  * @dev Library with common ERC-4337 utility functions.
  *
- * Example usage:
- *
- * ```solidity
- * contract Example {
- *     using ERC4337Utils for *;
- *
- *     function _foo(PackedUserOperation memory userOp) internal {
- *        // Parse
- *        address aggregator = ...;
- *        uint48 validAfter = ...;
- *        uint48 validUntil = ...;
- *        uint256 validationData = userOp.packValidationData(aggregator, validAfter, validUntil);
- *        (address parsedAggregator, uint48 parsedValidAfter, uint48 parsedValidUntil) = validationData.parse();
- *
- *        // Get values
- *        address factory = userOp.factory();
- *        bytes calldata factoryData = userOp.factoryData();
- *        uint256 verificationGasLimit = userOp.verificationGasLimit();
- *        uint256 callGasLimit = userOp.callGasLimit();
- *        // ...
- *
- *     }
- * }
- * ```
- *
  * See https://eips.ethereum.org/EIPS/eip-4337[ERC-4337].
  */
 library ERC4337Utils {
