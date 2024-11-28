@@ -185,7 +185,7 @@ interface IAccount {
      * @dev Validates a user operation.
      *
      * * MUST validate the caller is a trusted EntryPoint
-     * * MUST validate that the signature is a valid signature of the userOpHash, and SHOULD 
+     * * MUST validate that the signature is a valid signature of the userOpHash, and SHOULD
      *   return SIG_VALIDATION_FAILED (and not revert) on signature mismatch. Any other error MUST revert.
      * * MUST pay the entryPoint (caller) at least the “missingAccountFunds” (which might
      *   be zero, in case the current account’s deposit is high enough)
