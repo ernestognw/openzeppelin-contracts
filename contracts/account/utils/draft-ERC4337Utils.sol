@@ -16,15 +16,19 @@ import {Packing} from "../../utils/Packing.sol";
  *     using ERC4337Utils for *;
  *
  *     function _foo(PackedUserOperation memory userOp) internal {
- *         // Parse
- *         (address aggregator, uint48 validAfter, uint48 validUntil) = validationData.parse();
+ *        // Parse
+ *        address aggregator = ...;
+ *        uint48 validAfter = ...;
+ *        uint48 validUntil = ...;
+ *        uint256 validationData = userOp.packValidationData(aggregator, validAfter, validUntil);
+ *        (address parsedAggregator, uint48 parsedValidAfter, uint48 parsedValidUntil) = validationData.parse();
  *
- *         // Get values
- *         address factory = userOp.factory();
- *         bytes calldata factoryData = userOp.factoryData();
- *         uint256 verificationGasLimit = userOp.verificationGasLimit();
- *         uint256 callGasLimit = userOp.callGasLimit();
- *         // ...
+ *        // Get values
+ *        address factory = userOp.factory();
+ *        bytes calldata factoryData = userOp.factoryData();
+ *        uint256 verificationGasLimit = userOp.verificationGasLimit();
+ *        uint256 callGasLimit = userOp.callGasLimit();
+ *        // ...
  *
  *     }
  * }
