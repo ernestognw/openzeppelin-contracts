@@ -136,6 +136,3 @@ console.log(userOpReceipt);
 ----
 
 NOTE: When using sponsored transaction relayers, be aware that the authorized account can cause relayers to spend gas without being reimbursed by either invalidating the authorization (increasing the account's nonce) or by sweeping the relevant assets out of the account. Relayers may implement safeguards like requiring a bond or using a reputation system.
-
-
-
