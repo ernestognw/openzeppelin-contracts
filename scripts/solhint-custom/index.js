@@ -1,5 +1,5 @@
 const path = require('path');
-const minimatch = require('minimatch');
+const { minimatch } = require('minimatch');
 
 // Files matching these patterns will be ignored unless a rule has `static global = true`
 const ignore = ['contracts/mocks/**/*', 'test/**/*'];
