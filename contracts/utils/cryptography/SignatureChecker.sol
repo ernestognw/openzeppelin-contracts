@@ -115,6 +115,7 @@ library SignatureChecker {
         for (uint256 i = 0; i < signers.length; ++i) {
             bytes memory signer = signers[i];
 
+            // If one of the signatures is invalid, reject the batch
             if (!isValidERC7913SignatureNow(signer, hash, signatures[i])) return false;
 
             bytes32 id = keccak256(signer);
