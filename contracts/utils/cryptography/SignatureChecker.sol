@@ -118,7 +118,7 @@ library SignatureChecker {
             if (!isValidERC7913SignatureNow(signer, hash, signatures[i])) return false;
 
             bytes32 id = keccak256(signer);
-            // if the current signer id is greater than all previous signer ids, the this is a new signer.
+            // If the current signer ID is greater than all previous IDs, then this is a new signer.
             if (lastId < id) {
                 lastId = id;
             } else {
