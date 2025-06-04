@@ -118,9 +118,12 @@ library SignatureChecker {
             if (!isValidERC7913SignatureNow(signer, hash, signatures[i])) return false;
 
             bytes32 id = keccak256(signer);
+            // if the current signer id is greater than all previous signer ids, the this is a new signer.
             if (lastId < id) {
                 lastId = id;
             } else {
+                // If this signer id is not greater than all the previous ones, verify that it is not a duplicate of a previous one
+                // This loop is never executed if the signers are ordered by id.
                 for (uint256 j = 0; j < i; ++j) {
                     if (id == keccak256(signers[j])) return false;
                 }
