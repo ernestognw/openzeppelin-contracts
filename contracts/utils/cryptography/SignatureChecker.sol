@@ -120,10 +120,11 @@ library SignatureChecker {
             bytes32 id = keccak256(signer);
             if (lastId < id) {
                 lastId = id;
-            } else
+            } else {
                 for (uint256 j = 0; j < i; ++j) {
                     if (id == keccak256(signers[j])) return false;
                 }
+            }
         }
 
         return true;
