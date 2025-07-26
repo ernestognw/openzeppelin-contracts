@@ -41,7 +41,8 @@ library TrieProof {
     }
 
     struct Node {
-        bytes encoded; // Raw RLP encoded node
+        uint256 offset; // Raw RLP encoded node calldata offset
+        uint256 length; // Raw RLP encoded node calldata length
         RLP.Item[] decoded; // Decoded RLP items
     }
 
@@ -57,7 +58,7 @@ library TrieProof {
     function verify(
         bytes memory key,
         bytes memory value,
-        bytes[] memory proof,
+        bytes[] calldata proof,
         bytes32 root
     ) internal pure returns (bool) {
         return verify(key, value, proof, root, EVM_TREE_RADIX);
@@ -67,7 +68,7 @@ library TrieProof {
     function verify(
         bytes memory key,
         bytes memory value,
-        bytes[] memory proof,
+        bytes[] calldata proof,
         bytes32 root,
         uint256 radix
     ) internal pure returns (bool) {
@@ -78,7 +79,7 @@ library TrieProof {
     /// @dev Processes a proof for a given key using default Ethereum radix (16) and returns the processed value.
     function processProof(
         bytes memory key,
-        bytes[] memory proof,
+        bytes[] calldata proof,
         bytes32 root
     ) internal pure returns (bytes memory value, ProofError) {
         return processProof(key, proof, root, EVM_TREE_RADIX);
@@ -87,7 +88,7 @@ library TrieProof {
     /// @dev Same as {processProof} but with a custom radix.
     function processProof(
         bytes memory key,
-        bytes[] memory proof,
+        bytes[] calldata proof,
         bytes32 root,
         uint256 radix
     ) internal pure returns (bytes memory value, ProofError) {
@@ -142,11 +143,11 @@ library TrieProof {
         Node memory node,
         uint256 keyIndex
     ) private pure returns (ProofError) {
-        if (keyIndex == 0 && !string(bytes.concat(keccak256(node.encoded))).equal(string(nodeId)))
-            return ProofError.INVALID_ROOT_HASH; // Root node must match root hash
-        if (node.encoded.length >= 32 && !string(bytes.concat(keccak256(node.encoded))).equal(string(nodeId)))
-            return ProofError.INVALID_LARGE_INTERNAL_HASH; // Large nodes are stored as hashes
-        if (!string(node.encoded).equal(string(nodeId))) return ProofError.INVALID_INTERNAL_NODE_HASH; // Small nodes must match directly
+        bytes32 nodeHash = _hashCalldata(node.offset, node.length);
+        bool nodeHashMatches = string(bytes.concat(nodeHash)).equal(string(nodeId));
+        if (keyIndex == 0 && !nodeHashMatches) return ProofError.INVALID_ROOT_HASH; // Root node must match root hash
+        if (node.length >= 32 && !nodeHashMatches) return ProofError.INVALID_LARGE_INTERNAL_HASH; // Large nodes are stored as hashes
+        if (!(nodeHash == keccak256(nodeId))) return ProofError.INVALID_INTERNAL_NODE_HASH; // Small nodes must match directly
         return ProofError.NO_ERROR; // No error
     }
 
@@ -205,11 +206,11 @@ library TrieProof {
      * @dev Converts raw proof bytes into structured Node objects with RLP parsing.
      * Transforms each proof element into a Node with both encoded and decoded forms.
      */
-    function _decodeProof(bytes[] memory proof) private pure returns (Node[] memory proof_) {
-        uint256 length = proof.length;
-        proof_ = new Node[](length);
-        for (uint256 i = 0; i < length; i++) {
-            proof_[i] = Node(proof[i], proof[i].readList());
+    function _decodeProof(bytes[] calldata proof) private pure returns (Node[] memory proof_) {
+        proof_ = new Node[](proof.length);
+        for (uint256 i = 0; i < proof.length; i++) {
+            (uint256 offset, uint256 length) = _calldataOffsetAndLength(proof[i]);
+            proof_[i] = Node(offset, length, proof[i].readList());
         }
     }
 
@@ -240,5 +241,25 @@ library TrieProof {
             length++;
         }
         return length;
+    }
+
+    /**
+     * @dev Hashes an encoded node from calldata.
+     */
+    function _hashCalldata(uint256 offset, uint256 length) private pure returns (bytes32 hash) {
+        assembly ("memory-safe") {
+            calldatacopy(mload(0x40), offset, length)
+            hash := keccak256(mload(0x40), length)
+        }
+    }
+
+    /**
+     * @dev Extracts the offset and length of a calldata array.
+     */
+    function _calldataOffsetAndLength(bytes calldata proof) private pure returns (uint256 offset, uint256 length) {
+        assembly ("memory-safe") {
+            offset := proof.offset
+            length := proof.length
+        }
     }
 }
