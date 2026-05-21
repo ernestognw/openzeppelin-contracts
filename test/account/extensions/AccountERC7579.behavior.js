@@ -294,6 +294,26 @@ function shouldBehaveLikeAccountERC7579({ withHooks = false } = {}) {
         );
       });
 
+      it('funds the module onUninstall under aggressive gas estimation', async function () {
+        const heavyModule = await ethers.deployContract('$ERC7579ModuleGasHungryMock', [MODULE_TYPE_EXECUTOR]);
+        await this.mock.$_installModule(MODULE_TYPE_EXECUTOR, heavyModule, '0x');
+
+        // estimateGas binary-searches for the minimum gas where the outer tx does not revert.
+        // The reorder in _uninstallModule ensures that minimum also funds the inner onUninstall
+        // via EIP-150's 63/64 rule, so the module's event must still be emitted at the limit.
+        const gasLimit = await this.mockFromEntrypoint.uninstallModule.estimateGas(
+          MODULE_TYPE_EXECUTOR,
+          heavyModule,
+          '0x',
+        );
+
+        await expect(this.mockFromEntrypoint.uninstallModule(MODULE_TYPE_EXECUTOR, heavyModule, '0x', { gasLimit }))
+          .to.emit(this.mock, 'ModuleUninstalled')
+          .withArgs(MODULE_TYPE_EXECUTOR, heavyModule)
+          .to.emit(heavyModule, 'ModuleUninstalledReceived')
+          .withArgs(this.mock, '0x');
+      });
+
       withHooks &&
         describe('with hook', function () {
           beforeEach(async function () {

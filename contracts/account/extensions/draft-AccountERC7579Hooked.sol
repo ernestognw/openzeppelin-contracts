@@ -111,9 +111,11 @@ abstract contract AccountERC7579Hooked is AccountERC7579 {
 
         if (moduleTypeId == MODULE_TYPE_HOOK) {
             require(_hook == module, ERC7579Utils.ERC7579UninstalledModule(moduleTypeId, module));
-            _hook = address(0);
         }
+        // super._uninstallModule calls onUninstall before mutating state; defer clearing _hook
+        // until after that call so the hook module sees itself as still installed during onUninstall.
         super._uninstallModule(moduleTypeId, module, deInitData);
+        if (moduleTypeId == MODULE_TYPE_HOOK) _hook = address(0);
 
         // === End of the body (`_` part of the modifier) -- Beginning of the postcheck ===
 

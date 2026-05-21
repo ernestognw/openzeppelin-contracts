@@ -44,6 +44,15 @@ abstract contract ERC7579ModuleMaliciousMock is ERC7579ModuleMock {
     }
 }
 
+abstract contract ERC7579ModuleGasHungryMock is ERC7579ModuleMock {
+    mapping(uint256 slot => uint256 value) private _stamp;
+
+    function onUninstall(bytes calldata data) public virtual override {
+        for (uint256 i = 0; i < 16; ++i) _stamp[i] = block.number;
+        super.onUninstall(data);
+    }
+}
+
 abstract contract ERC7579HookMock is ERC7579ModuleMock(MODULE_TYPE_HOOK), IERC7579Hook {
     event PreCheck(address sender, uint256 value, bytes data);
     event PostCheck(bytes hookData);

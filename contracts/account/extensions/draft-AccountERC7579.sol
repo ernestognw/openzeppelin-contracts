@@ -288,13 +288,20 @@ abstract contract AccountERC7579 is Account, IERC1271, IERC7579Execution, IERC75
     function _uninstallModule(uint256 moduleTypeId, address module, bytes memory deInitData) internal virtual {
         require(supportsModule(moduleTypeId), ERC7579Utils.ERC7579UnsupportedModuleType(moduleTypeId));
 
+        bytes4 selector;
+        if (moduleTypeId == MODULE_TYPE_FALLBACK) {
+            (selector, deInitData) = _decodeFallbackData(deInitData);
+        }
+
+        // Call onUninstall before clearing state so the EIP-150 63/64 rule forces the gas estimator
+        // to fund the inner call. Success is ignored so a reverting module can still be uninstalled.
+        LowLevelCall.callNoReturn(module, abi.encodeCall(IERC7579Module.onUninstall, (deInitData)));
+
         if (moduleTypeId == MODULE_TYPE_VALIDATOR) {
             require(_validators.remove(module), ERC7579Utils.ERC7579UninstalledModule(moduleTypeId, module));
         } else if (moduleTypeId == MODULE_TYPE_EXECUTOR) {
             require(_executors.remove(module), ERC7579Utils.ERC7579UninstalledModule(moduleTypeId, module));
         } else if (moduleTypeId == MODULE_TYPE_FALLBACK) {
-            bytes4 selector;
-            (selector, deInitData) = _decodeFallbackData(deInitData);
             require(
                 _fallbackHandler(selector) == module && module != address(0),
                 ERC7579Utils.ERC7579UninstalledModule(moduleTypeId, module)
@@ -302,8 +309,6 @@ abstract contract AccountERC7579 is Account, IERC1271, IERC7579Execution, IERC75
             delete _fallbacks[selector];
         }
 
-        // Ignores success purposely to avoid modules that revert on uninstall
-        LowLevelCall.callNoReturn(module, abi.encodeCall(IERC7579Module.onUninstall, (deInitData)));
         emit ModuleUninstalled(moduleTypeId, module);
     }
 
