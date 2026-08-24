@@ -4,7 +4,10 @@ pragma solidity ^0.8.26;
 
 import {Context} from "../../../../utils/Context.sol";
 import {Pausable} from "../../../../utils/Pausable.sol";
-import {IERC3643, IIdentityRegistry, ICompliance, IIdentity} from "../../../../interfaces/IERC3643.sol";
+import {IERC3643} from "../../../../interfaces/IERC3643.sol";
+import {IIdentityRegistry} from "../../../../interfaces/IERC3643IdentityRegistry.sol";
+import {ICompliance} from "../../../../interfaces/IERC3643Compliance.sol";
+import {IIdentity} from "../../../../interfaces/IERC3643Identity.sol";
 import {ERC20} from "../../ERC20.sol";
 import {Math} from "../../../../utils/math/Math.sol";
 import {Ownable} from "../../../../access/Ownable.sol";
