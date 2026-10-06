@@ -584,7 +584,7 @@ describe('ERC4337Utils', function () {
   describe('initCodeHash', function () {
     const MARKER = '0x7702000000000000000000000000000000000000';
 
-    before(async function () {
+    beforeEach(async function () {
       // create an EIP-7702 account instance
       this.account = await new ERC4337Helper(connection).newAccount(
         '$AccountEIP7702Mock',
@@ -605,23 +605,24 @@ describe('ERC4337Utils', function () {
         const initCode = ethers.concat([marker, tail]);
 
         // Before delegation
-        const undelegatedSubstition = ethers.concat([ethers.ZeroAddress, tail]);
+        const undelegatedSubstitution = ethers.concat([ethers.ZeroAddress, tail]);
 
         await expect(this.utils.$initCodeHash({ ...this.userOp.packed, initCode })).to.eventually.equal(
-          ethers.keccak256(undelegatedSubstition),
+          ethers.keccak256(undelegatedSubstitution),
         );
-        // EntryPoint reverts with `Eip7702SenderWithoutCode(sender)`
-        await expect(this.userOp.hash({ initCode })).to.be.rejected;
+        await expect(this.userOp.hash({ initCode }))
+          .to.be.revertedWithCustomError(this.userOp._env.entrypoint, 'Eip7702SenderWithoutCode')
+          .withArgs(this.account);
 
         // After delegation
         const { delegate } = await this.account.deploy();
-        const delegatedSubstition = ethers.concat([delegate.target, tail]);
+        const delegatedSubstitution = ethers.concat([delegate.target, tail]);
 
         await expect(this.utils.$initCodeHash({ ...this.userOp.packed, initCode })).to.eventually.equal(
-          ethers.keccak256(delegatedSubstition),
+          ethers.keccak256(delegatedSubstitution),
         );
         await expect(this.userOp.hash({ initCode })).to.eventually.equal(
-          await this.userOp.hash({ initCode: delegatedSubstition }),
+          await this.userOp.hash({ initCode: delegatedSubstitution }),
         );
       });
     }
