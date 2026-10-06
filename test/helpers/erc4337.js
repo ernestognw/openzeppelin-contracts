@@ -109,33 +109,9 @@ export class UserOperation {
     };
   }
 
-  hash(entrypoint) {
-    return entrypoint.getUserOpHash(this.packed);
+  hash(entrypoint, overrides = {}) {
+    return entrypoint.getUserOpHash({ ...this.packed, ...overrides });
   }
-}
-
-// EIP-712 userOpHash as the EntryPoint computes it, but with `initCodeHash` used in place of keccak256(initCode)
-export async function userOpHash(entrypoint, packed, initCodeHash) {
-  const structHash = ethers.keccak256(
-    ethers.AbiCoder.defaultAbiCoder().encode(
-      ['bytes32', 'address', 'uint256', 'bytes32', 'bytes32', 'bytes32', 'uint256', 'bytes32', 'bytes32'],
-      [
-        await entrypoint.getPackedUserOpTypeHash(),
-        packed.sender,
-        packed.nonce,
-        initCodeHash,
-        ethers.keccak256(packed.callData),
-        packed.accountGasLimits,
-        packed.preVerificationGas,
-        packed.gasFees,
-        ethers.keccak256(packed.paymasterAndData),
-      ],
-    ),
-  );
-  return ethers.solidityPackedKeccak256(
-    ['bytes', 'bytes32', 'bytes32'],
-    ['0x1901', await entrypoint.getDomainSeparatorV4(), structHash],
-  );
 }
 
 const parseInitCode = initCode => ({
@@ -252,7 +228,7 @@ class UserOperationWithContext extends UserOperation {
     } else throw new Error('No EIP-7702 authorization available for the sender of this user operation');
   }
 
-  hash() {
-    return super.hash(this._env.entrypoint);
+  hash(overrides = {}) {
+    return super.hash(this._env.entrypoint, overrides);
   }
 }

@@ -1,7 +1,7 @@
 import { network } from 'hardhat';
 import { expect } from 'chai';
 import { MAX_UINT48 } from '../../helpers/constants';
-import { packValidationData, UserOperation, userOpHash } from '../../helpers/erc4337';
+import { packValidationData, UserOperation } from '../../helpers/erc4337';
 import { ValidationRange } from '../../helpers/enums';
 
 const {
@@ -582,13 +582,12 @@ describe('ERC4337Utils', function () {
 
   describe('initCodeHash', function () {
     const MARKER = '0x7702000000000000000000000000000000000000';
-    const withInitCode = (userOp, initCode) => ({ ...userOp, initCode });
 
     beforeEach(async function () {
       this.entrypoint = ethers.predeploy.entrypoint.latest;
       this.delegate = ethers.Wallet.createRandom().address.toLowerCase();
       await ethers.provider.send('hardhat_setCode', [this.sender.address, ethers.concat(['0xef0100', this.delegate])]);
-      this.userOp = new UserOperation({ sender: this.sender, nonce: 0n }).packed;
+      this.userOp = new UserOperation({ sender: this.sender, nonce: 0n });
     });
 
     for (const [name, marker, tail] of [
@@ -597,21 +596,24 @@ describe('ERC4337Utils', function () {
       ['marker + initData', MARKER, '0xdeadbeef'],
     ]) {
       it(`binds the delegate (${name})`, async function () {
-        const op = withInitCode(this.userOp, ethers.concat([marker, tail]));
-        const initCodeHash = await this.utils.$initCodeHash(op);
+        const initCode = ethers.concat([marker, tail]);
+        const substituted = ethers.concat([this.delegate, tail]);
 
-        expect(initCodeHash).to.equal(ethers.keccak256(ethers.concat([this.delegate, tail]))); // substitution
-        expect(await userOpHash(this.entrypoint, op, initCodeHash)).to.equal(await this.entrypoint.getUserOpHash(op));
+        await expect(this.utils.$initCodeHash({ ...this.userOp.packed, initCode })).to.eventually.equal(
+          ethers.keccak256(substituted),
+        );
+        await expect(this.userOp.hash(this.entrypoint, { initCode })).to.eventually.equal(
+          await this.userOp.hash(this.entrypoint, { initCode: substituted }),
+        );
       });
     }
 
     it('ignores the delegate for a non-zero-tail factory', async function () {
       const initCode = '0x7702aabbccddeeff00112233445566778899aabb'; // 0x7702 prefix but non-zero tail -> not a marker
-      const op = withInitCode(this.userOp, initCode);
-      const initCodeHash = await this.utils.$initCodeHash(op);
 
-      expect(initCodeHash).to.equal(ethers.keccak256(initCode)); // no substitution
-      expect(await userOpHash(this.entrypoint, op, initCodeHash)).to.equal(await this.entrypoint.getUserOpHash(op));
+      await expect(this.utils.$initCodeHash({ ...this.userOp.packed, initCode })).to.eventually.equal(
+        ethers.keccak256(initCode),
+      );
     });
   });
 
