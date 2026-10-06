@@ -1,14 +1,15 @@
 import { network } from 'hardhat';
 import { expect } from 'chai';
 import { MAX_UINT48 } from '../../helpers/constants';
-import { packValidationData, UserOperation } from '../../helpers/erc4337';
+import { ERC4337Helper, packValidationData, UserOperation } from '../../helpers/erc4337';
 import { ValidationRange } from '../../helpers/enums';
 
+const connection = await network.create();
 const {
   ethers,
   helpers: { time },
   networkHelpers: { loadFixture },
-} = await network.create();
+} = connection;
 
 const ADDRESS_ONE = '0x0000000000000000000000000000000000000001';
 const BLOCK_RANGE_FLAG = 0x800000000000n; // 1n << 47n
@@ -583,11 +584,16 @@ describe('ERC4337Utils', function () {
   describe('initCodeHash', function () {
     const MARKER = '0x7702000000000000000000000000000000000000';
 
-    beforeEach(async function () {
-      this.entrypoint = ethers.predeploy.entrypoint.latest;
-      this.delegate = ethers.Wallet.createRandom().address.toLowerCase();
-      await ethers.provider.send('hardhat_setCode', [this.sender.address, ethers.concat(['0xef0100', this.delegate])]);
-      this.userOp = new UserOperation({ sender: this.sender, nonce: 0n });
+    before(async function () {
+      // create an EIP-7702 account instance
+      this.account = await new ERC4337Helper(connection).newAccount(
+        '$AccountEIP7702Mock',
+        ['AccountEIP7702Mock', '1'],
+        { eip7702signer: this.sender },
+      );
+
+      // create an empty user operation for the account
+      this.userOp = await this.account.createUserOp();
     });
 
     for (const [name, marker, tail] of [
@@ -597,13 +603,25 @@ describe('ERC4337Utils', function () {
     ]) {
       it(`binds the delegate (${name})`, async function () {
         const initCode = ethers.concat([marker, tail]);
-        const substituted = ethers.concat([this.delegate, tail]);
+
+        // Before delegation
+        const undelegatedSubstition = ethers.concat([ethers.ZeroAddress, tail]);
 
         await expect(this.utils.$initCodeHash({ ...this.userOp.packed, initCode })).to.eventually.equal(
-          ethers.keccak256(substituted),
+          ethers.keccak256(undelegatedSubstition),
         );
-        await expect(this.userOp.hash(this.entrypoint, { initCode })).to.eventually.equal(
-          await this.userOp.hash(this.entrypoint, { initCode: substituted }),
+        // EntryPoint reverts with `Eip7702SenderWithoutCode(sender)`
+        await expect(this.userOp.hash({ initCode })).to.be.rejected;
+
+        // After delegation
+        const { delegate } = await this.account.deploy();
+        const delegatedSubstition = ethers.concat([delegate.target, tail]);
+
+        await expect(this.utils.$initCodeHash({ ...this.userOp.packed, initCode })).to.eventually.equal(
+          ethers.keccak256(delegatedSubstition),
+        );
+        await expect(this.userOp.hash({ initCode })).to.eventually.equal(
+          await this.userOp.hash({ initCode: delegatedSubstition }),
         );
       });
     }
