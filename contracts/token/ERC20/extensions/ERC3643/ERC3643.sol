@@ -32,12 +32,15 @@ import {ERC20} from "../../ERC20.sol";
  *   derived contract can supply preconditions or additional identity-migration steps
  *   before calling `super._recoveryAddress`.
  *
- * Deliberate divergences from the ERC-3643 text, each of which a derived contract may
- * reverse by overriding the relevant hook:
+ * Deliberate divergence from the ERC-3643 text, which a derived contract may reverse by
+ * overriding {_update}:
  *
  * * Mint checks {ICompliance-canTransfer} in addition to the recipient's identity, as the
  *   reference implementation does, so supply caps and distribution rules also apply to
  *   issuance. The ERC text has mint bypass the compliance rules.
+ *
+ * The token also behaves as follows:
+ *
  * * Mint and burn work while the token is paused; only transfers block. Circulation and
  *   issuance/redemption are separate operational concerns.
  * * {forcedTransfer} and {recoveryAddress} bypass the pause too, in line with the spec
@@ -59,7 +62,13 @@ import {ERC20} from "../../ERC20.sol";
  * ({ICompliance-transferred}, {ICompliance-created} or {ICompliance-destroyed}), made after
  * the balances are updated, and the compliance may reenter the token from it. A deployment
  * that binds compliance code it does not control can inherit {ReentrancyGuardTransient} and
- * mark {_update}, {_forcedTransfer} and {_recoveryAddress} with `nonReentrant`.
+ * mark {_update} and {_forcedTransfer} with `nonReentrant`. Guarding {_recoveryAddress} as well
+ * makes it revert, since it calls {_forcedTransfer}.
+ *
+ * IMPORTANT: ERC-3643 requires an ERC-173 owner and an agent role compatible with {IAgentRole}.
+ * This contract defines neither, so a derived contract must add both and enforce them in {_checkAdmin}.
+ * The token must also be an agent of its identity registry, since {recoveryAddress} registers and
+ * deletes identities there.
  */
 abstract contract ERC3643 is ERC20, Pausable, IERC3643 {
     mapping(address account => bool) private _frozen;
@@ -210,7 +219,10 @@ abstract contract ERC3643 is ERC20, Pausable, IERC3643 {
         _burn(from, value);
     }
 
-    /// @inheritdoc IERC3643
+    /**
+     * @dev See {IERC3643-recoveryAddress}. Registers `updated` with `investorOnchainID` and reverts with
+     * {ERC3643FailedForcedTransfer} if `updated` is not verified afterwards.
+     */
     function recoveryAddress(
         address lost,
         address updated,
