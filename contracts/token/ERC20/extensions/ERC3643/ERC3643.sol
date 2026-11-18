@@ -128,6 +128,9 @@ abstract contract ERC3643 is ERC20, Pausable, IERC3643 {
     /// @dev The investor identity of a recovery is not the identity `lost` is registered with.
     error ERC3643InvalidRecoveryIdentity(address lost, address investorOnchainID);
 
+    /// @dev The lost wallet and the new wallet of a recovery are the same.
+    error ERC3643InvalidRecoveryWallet(address wallet);
+
     /// @dev A batch entry point received arrays of different lengths.
     error ERC3643InvalidArrayLength();
 
@@ -444,7 +447,7 @@ abstract contract ERC3643 is ERC20, Pausable, IERC3643 {
      * that `investorOnchainID` belongs to `lost`; {recoveryAddress} does.
      *
      * Left as a hook: derived contracts may add preconditions (e.g. verify a MANAGEMENT
-     * key on the ONCHAINID, forbid same-wallet recovery), guard the migration semantics
+     * key on the ONCHAINID), guard the migration semantics
      * they care about (e.g. avoid overwriting a wallet already resolved through a global
      * fallback), or notify compliance with pre-migration identity values, before calling
      * `super._recoveryAddress`.
@@ -470,6 +473,7 @@ abstract contract ERC3643 is ERC20, Pausable, IERC3643 {
         address updated,
         address investorOnchainID
     ) internal virtual returns (bool) {
+        require(lost != updated, ERC3643InvalidRecoveryWallet(lost));
         IERC3643IdentityRegistry idRegistry = identityRegistry();
         uint256 investorTokens = balanceOf(lost);
         uint256 frozenTokens = getFrozenTokens(lost);
