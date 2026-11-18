@@ -578,6 +578,13 @@ describe('ERC3643', function () {
         .withArgs(this.holder, otherIdentity);
     });
 
+    it('reverts when the new wallet is the lost wallet', async function () {
+      await this.token.connect(this.owner).freezePartialTokens(this.holder, 30n);
+      await expect(this.token.connect(this.owner).recoveryAddress(this.holder, this.holder, this.holderIdentity))
+        .to.be.revertedWithCustomError(this.token, 'ERC3643InvalidRecoveryWallet')
+        .withArgs(this.holder);
+    });
+
     it('leaves the identity check to the public function', async function () {
       const otherIdentity = random.address();
       await this.registry.setVerified(otherIdentity, true);
